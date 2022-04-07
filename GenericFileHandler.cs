@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem
+namespace Penguin.Vfs
 {
     public class GenericFileHandler<T> : IFileSystemEntryHandler where T : IFileSystemEntry
     {
@@ -27,6 +27,7 @@ namespace VirtualFileSystem
         {
             IFileSystemEntry toReturn = (T)Activator.CreateInstance(typeof(T), new object[] { resolveUriPackage });
 
+            
             return toReturn;
         }
 

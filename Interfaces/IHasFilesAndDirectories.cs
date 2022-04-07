@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VirtualFileSystem.Interfaces
+namespace Penguin.Vfs.Interfaces
 {
     public interface IHasFilesAndDirectories : IHasFiles, IHasDirectories
     {

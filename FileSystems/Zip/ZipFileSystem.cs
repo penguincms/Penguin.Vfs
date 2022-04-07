@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using VirtualFileSystem.Extensions;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Zip
+namespace Penguin.Vfs.FileSystems.Zip
 {
     public partial class ZipFileSystem : IFile, IFileSystem
     {
@@ -67,20 +68,23 @@ namespace VirtualFileSystem.FileSystems.Zip
             {
                 List<CachedEntry> c = new();
 
-                IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
-
                 foreach (ZipArchiveEntry zipArchiveEntry in this.TryGetEntries())
                 {
                     c.Add(new CachedEntry()
                     {
                         FullName = zipArchiveEntry.FullName,
-                        Name = zipArchiveEntry.Name
+                        Name = zipArchiveEntry.Name,
+                        LastModified = zipArchiveEntry.LastWriteTime.DateTime,
+                        Length = zipArchiveEntry.Length
                     });
                 }
 
                 return c;
             }
         }
+
+        public DateTime LastModified { get; }
+        public long Length { get; }
 
         public ZipFileSystem(ResolveUriPackage resolveUriPackage)
         {
@@ -130,7 +134,10 @@ namespace VirtualFileSystem.FileSystems.Zip
 
                 if (returned.Add(dir.Value))
                 {
-                    yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(zipArchiveEntry.GetDirectoryName(), this));
+                    yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(zipArchiveEntry.GetDirectoryName(), this))
+                    {
+                        LastModified = System.DateTime.MinValue
+                    };
                 }
             }
         }
@@ -152,7 +159,7 @@ namespace VirtualFileSystem.FileSystems.Zip
                     }
 
                     yield return this.ResolutionPackage.EntryFactory.Resolve(
-                        this.ResolutionPackage.AppendChild(zipArchiveEntry.Name, this)) as IFile;
+                        this.ResolutionPackage.AppendChild(zipArchiveEntry.Name, this).WithFileInfo(zipArchiveEntry.LastModified, zipArchiveEntry.Length)) as IFile;
                 }
                 else
                 {

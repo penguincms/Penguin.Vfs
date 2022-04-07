@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileTypes
+namespace Penguin.Vfs.FileTypes
 {
     internal class LogFile : TableFile
     {

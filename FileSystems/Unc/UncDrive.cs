@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using VirtualFileSystem.Caches;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Caches;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Local
 {
     public class UncDrive : LocalDrive
     {

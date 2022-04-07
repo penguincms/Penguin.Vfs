@@ -1,6 +1,6 @@
-﻿using VirtualFileSystem.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Local
 {
     internal class LocalDriveHandler : IFileSystemEntryHandler
     {

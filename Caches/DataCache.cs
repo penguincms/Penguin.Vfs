@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 
-namespace VirtualFileSystem.Caches
+namespace Penguin.Vfs.Caches
 {
     public static class DataCache
     {

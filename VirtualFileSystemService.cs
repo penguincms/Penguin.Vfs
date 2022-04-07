@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using VirtualFileSystem.Caches;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Caches;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem
+namespace Penguin.Vfs
 {
     public class VirtualFileSystemService
     {
@@ -17,6 +17,20 @@ namespace VirtualFileSystem
             IHasDirectories parent = (IHasDirectories)this.FindNode(pathPart);
 
             return parent.EnumerateDirectories(recursive);
+        }
+
+        public IStream OpenFile(string path)
+        {
+            PathPart pathPart = new PathPart(path);
+
+            IFileSystem fs = this.VirtualFileSystemSettings.Resolve(new ResolveUriPackage()
+            {
+                VirtualUri = new VirtualUri(pathPart.Chunks.First()),
+                EntryFactory = this.VirtualFileSystemSettings,
+                SessionCache = new Dictionary<string, IFileSystemEntry>()
+            }) as IFileSystem;
+
+            return fs.Open(new VirtualUri(pathPart));
         }
 
         public IEnumerable<IFile> EnumerateFiles(string path, bool recursive) => this.EnumerateFiles(new PathPart(path), recursive);

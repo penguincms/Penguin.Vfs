@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using VirtualFileSystem.Extensions;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Local
 {
     public class LocalDrive : IFileSystem, IFileSystemEntry
     {
@@ -23,6 +24,7 @@ namespace VirtualFileSystem.FileSystems.Local
         public PathPart MountPoint { get; set; }
         ResolveUriPackage IFileSystemEntry.ResolutionPackage => this.ResolutionPackage;
         public IUri Uri { get; }
+        public DateTime LastModified => new DirectoryInfo(this.Uri.FullName.Value).LastWriteTime;
 
         public LocalDrive(ResolveUriPackage resolveUriPackage)
         {
@@ -166,7 +168,11 @@ namespace VirtualFileSystem.FileSystems.Local
 
                         foreach (string file in files)
                         {
-                            if (this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(this.MountPoint))) is IFile f)
+                            FileInfo fi = new FileInfo(file);
+                            ResolveUriPackage newPackage = this.ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(this.MountPoint))
+                                                                                  .WithFileInfo(fi.LastWriteTime, fi.Length);
+
+                            if (this.ResolutionPackage.EntryFactory.Resolve(newPackage) is IFile f)
                             {
                                 yield return f;
                             }

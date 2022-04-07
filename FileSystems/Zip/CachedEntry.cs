@@ -1,4 +1,6 @@
-﻿namespace VirtualFileSystem.FileSystems.Zip
+﻿using System;
+
+namespace Penguin.Vfs.FileSystems.Zip
 {
     public partial class ZipFileSystem
     {
@@ -8,6 +10,8 @@
 
             public string Name { get; internal set; }
 
+            public DateTime LastModified { get; internal set; }
+            public long Length { get; internal set; }
             public string GetDirectoryName()
             {
                 string n = this.Name;

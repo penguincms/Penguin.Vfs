@@ -1,4 +1,4 @@
-﻿namespace VirtualFileSystem.FileSystems.Zip
+﻿namespace Penguin.Vfs.FileSystems.Zip
 {
     public class ZipFileSystemEntryHandler : GenericFileHandler<ZipFileSystem>
     {

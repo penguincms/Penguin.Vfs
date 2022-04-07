@@ -1,6 +1,7 @@
-﻿using VirtualFileSystem.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 
-namespace VirtualFileSystem.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Local
 {
     public class LocalFileEntry : IFile, IFileSystemEntry
     {
@@ -12,9 +13,12 @@ namespace VirtualFileSystem.FileSystems.Local
 
         public LocalFileEntry(ResolveUriPackage resolveUriPackage)
         {
+            this.LastModified = new System.IO.FileInfo(resolveUriPackage.VirtualUri.FullName.Value).LastWriteTime;
+            this.Length = new System.IO.FileInfo(resolveUriPackage.VirtualUri.FullName.Value).Length;
             this.ResolutionPackage = resolveUriPackage;
         }
-
+        public long Length { get; internal set; }
+        public DateTime LastModified { get; internal set; }
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

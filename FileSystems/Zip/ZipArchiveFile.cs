@@ -1,6 +1,7 @@
-﻿using VirtualFileSystem.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 
-namespace VirtualFileSystem.FileSystems.Zip
+namespace Penguin.Vfs.FileSystems.Zip
 {
     public class ZipArchiveFile : IFile
     {
@@ -10,9 +11,14 @@ namespace VirtualFileSystem.FileSystems.Zip
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
 
+        public DateTime LastModified { get; internal set; }
+        public long Length { get; }
+
         public ZipArchiveFile(ResolveUriPackage resolveUriPackage)
         {
             this.ResolutionPackage = resolveUriPackage;
+            this.LastModified = resolveUriPackage.LastModified;
+            this.Length = resolveUriPackage.Length;
         }
 
         public void Dispose()

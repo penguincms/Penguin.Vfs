@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
 
-namespace VirtualFileSystem.Extensions
+namespace Penguin.Vfs.Extensions
 {
     public static class ZipArchiveEntryExtensions
     {

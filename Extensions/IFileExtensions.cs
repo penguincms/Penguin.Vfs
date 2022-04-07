@@ -1,6 +1,6 @@
-﻿using VirtualFileSystem.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.Extensions
+namespace Penguin.Vfs.Extensions
 {
     public static class IFileExtensions
     {

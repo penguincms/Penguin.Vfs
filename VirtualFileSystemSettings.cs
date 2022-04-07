@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using VirtualFileSystem.FileSystems.Local;
-using VirtualFileSystem.FileSystems.Zip;
-using VirtualFileSystem.FileTypes;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.FileSystems.Local;
+using Penguin.Vfs.FileSystems.Zip;
+using Penguin.Vfs.FileTypes;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem
+namespace Penguin.Vfs
 {
     public class VirtualFileSystemSettings : IFileSystemEntryFactory
     {

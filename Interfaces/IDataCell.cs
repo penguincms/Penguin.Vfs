@@ -1,4 +1,4 @@
-﻿namespace VirtualFileSystem.Interfaces
+﻿namespace Penguin.Vfs.Interfaces
 {
     public interface IDataCell
     {

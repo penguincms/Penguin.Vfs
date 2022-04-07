@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using VirtualFileSystem.FileSystems.Cache;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.FileSystems.Cache;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.Caches
+namespace Penguin.Vfs.Caches
 {
     internal class DummyCache : IFileSystemCache
     {

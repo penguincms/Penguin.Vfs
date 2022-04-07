@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.Caches
+namespace Penguin.Vfs.Caches
 {
     internal class CachedFileStream : Stream, IStream, IDisposable
     {

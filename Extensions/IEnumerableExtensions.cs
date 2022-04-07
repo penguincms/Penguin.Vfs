@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VirtualFileSystem.Extensions
+namespace Penguin.Vfs.Extensions
 {
     internal static class IEnumerableExtensions
     {

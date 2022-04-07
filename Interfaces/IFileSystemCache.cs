@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using VirtualFileSystem.FileSystems.Cache;
+using Penguin.Vfs.FileSystems.Cache;
 
-namespace VirtualFileSystem.Interfaces
+namespace Penguin.Vfs.Interfaces
 {
     public interface IFileSystemCache
     {

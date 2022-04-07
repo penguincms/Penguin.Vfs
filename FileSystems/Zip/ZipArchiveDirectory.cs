@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Compression;
-using VirtualFileSystem.Extensions;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Zip
+namespace Penguin.Vfs.FileSystems.Zip
 {
     internal class ZipArchiveDirectory : IDirectory
     {
@@ -34,7 +35,10 @@ namespace VirtualFileSystem.FileSystems.Zip
 
                     if (returned.Add(dir))
                     {
-                        yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(dir));
+                        yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(dir))
+                        {
+                            LastModified = DateTime.MinValue
+                        };
                     }
                 }
             }
@@ -53,7 +57,10 @@ namespace VirtualFileSystem.FileSystems.Zip
                         continue;
                     }
 
-                    yield return new ZipArchiveFile(this.ResolutionPackage.AppendChild(zipArchiveEntry.Name));
+                    yield return new ZipArchiveFile(this.ResolutionPackage.AppendChild(zipArchiveEntry.Name))
+                    {
+                        LastModified = zipArchiveEntry.LastWriteTime.DateTime
+                    };
                 }
             }
         }
@@ -79,6 +86,8 @@ namespace VirtualFileSystem.FileSystems.Zip
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
+
+        public DateTime LastModified { get; internal set; }
 
         public ZipArchiveDirectory(ResolveUriPackage resolveUriPackage)
         {

@@ -1,6 +1,6 @@
-﻿using VirtualFileSystem.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem
+namespace Penguin.Vfs
 {
     public abstract class RegexFileSystemEntryHandler : IFileSystemEntryHandler
     {

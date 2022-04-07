@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.Extensions
+namespace Penguin.Vfs.Extensions
 {
     public static class IFileSystemExtensions
     {

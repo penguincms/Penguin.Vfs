@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-using VirtualFileSystem.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem
+namespace Penguin.Vfs
 {
     public struct ResolveUriPackage
     {
         private HashSet<string> cachedDirectories;
         private HashSet<string> cachedFiles;
         private Dictionary<string, HashSet<string>> directoryContents;
-
+        public DateTime LastModified { get; set; }
+        public long Length { get; set; }
         public IReadOnlySet<string> CachedDirectories
         {
             get
@@ -117,6 +119,14 @@ namespace VirtualFileSystem
         {
             ResolveUriPackage toReturn = this.Copy();
             toReturn.FileSystem = fileSystem;
+            return toReturn;
+        }
+
+        public ResolveUriPackage WithFileInfo(DateTime lastModified, long length)
+        {
+            ResolveUriPackage toReturn = this.Copy();
+            toReturn.LastModified = lastModified;
+            toReturn.Length = length;
             return toReturn;
         }
 

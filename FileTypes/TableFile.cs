@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileTypes
+namespace Penguin.Vfs.FileTypes
 {
     public abstract class TableFile : TextFile, IEnumerable<IDataRow>
     {

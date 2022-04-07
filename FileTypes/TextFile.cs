@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using VirtualFileSystem.Extensions;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileTypes
+namespace Penguin.Vfs.FileTypes
 {
     public class TextFile : FileStream
     {

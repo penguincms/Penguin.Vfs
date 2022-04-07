@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using VirtualFileSystem.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Local
 {
     public class LocalDirectoryEntry : IFileSystemEntry, IDirectory
     {
@@ -19,8 +20,12 @@ namespace VirtualFileSystem.FileSystems.Local
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
 
+        public DateTime LastModified { get; internal set; }
+
         public LocalDirectoryEntry(ResolveUriPackage resolveUriPackage)
         {
+            this.LastModified = new System.IO.DirectoryInfo(resolveUriPackage.VirtualUri.FullName.Value).LastWriteTime;
+
             this.ResolutionPackage = resolveUriPackage;
 
             this.IsRecursive = NativeMethods.TryGetFinalPathName(this.Uri.FullName.WindowsValue, out string target) && this.Uri.FullName.IsChildOf(new PathPart(target));

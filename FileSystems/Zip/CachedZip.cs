@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VirtualFileSystem.FileSystems.Zip
+namespace Penguin.Vfs.FileSystems.Zip
 {
     public partial class ZipFileSystem
     {

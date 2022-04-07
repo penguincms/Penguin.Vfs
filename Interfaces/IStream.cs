@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace VirtualFileSystem.Interfaces
+namespace Penguin.Vfs.Interfaces
 {
     public interface IStream : IDisposable
     {

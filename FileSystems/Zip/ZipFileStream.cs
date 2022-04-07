@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using VirtualFileSystem.Interfaces;
+using Penguin.Vfs.Interfaces;
 
-namespace VirtualFileSystem.FileSystems.Zip
+namespace Penguin.Vfs.FileSystems.Zip
 {
     public class ZipFileStream : IStream
     {
