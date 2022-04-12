@@ -12,35 +12,37 @@ namespace Penguin.Vfs.Caches
     public static class DataCache
     {
         public const uint CNT_DSK_BLK = 1000;
-
         public const uint CNT_MEM_BLK = 100;
-
         public const uint LEN_BLK = 1_048_576;
-
         private const string CACHE_ROOT = "Cache\\Data";
-
-        private static readonly Stream CACHE_DISK = File.Open(Path.Combine(CACHE_ROOT, "BlockAllocationTable.dat"), FileMode.OpenOrCreate);
+        private static readonly Stream CACHE_DISK;
         private static readonly object CacheLock = new();
 
         //Make this not fucking auto flush
-        private static readonly DictionaryFile<ulong> DataPositions = new(Path.Combine(CACHE_ROOT, "BlockAllocationTable.dict"), new ULongSerialization(), false);
+        private static readonly DictionaryFile<ulong> DataPositions;
 
-        private static readonly Stream MEM_CACHE_DISK = File.Open(Path.Combine(CACHE_ROOT, "BlockAllocationTable.mem"), FileMode.OpenOrCreate);
-
-        private static byte[][] CACHE_MEMORY = new byte[CNT_MEM_BLK][];
-
-        private static ConcurrentQueue<ulong> CACHE_REQUESTS = new();
-
-        private static List<byte[]> CACHE_TEMP = new();
-
-        private static AutoResetEvent GATE_TEMP_CACHE = new(false);
-
-        private static DictionaryFile<string, uint> IdDictionary = new(Path.Combine(CACHE_ROOT, "Ids.dict"), new StringSerialization(), new UIntSerialization());
-
-        private static BackgroundWorker TempCacheWorker;
+        private static readonly Stream MEM_CACHE_DISK;
+        private static readonly byte[][] CACHE_MEMORY = new byte[CNT_MEM_BLK][];
+        private static readonly ConcurrentQueue<ulong> CACHE_REQUESTS = new();
+        private static readonly List<byte[]> CACHE_TEMP = new();
+        private static readonly AutoResetEvent GATE_TEMP_CACHE = new(false);
+        private static readonly DictionaryFile<string, uint> IdDictionary;
+        private static readonly BackgroundWorker TempCacheWorker;
+        public static string AppRoot => System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, System.AppDomain.CurrentDomain.RelativeSearchPath ?? "");
+        public static string CacheDirectory => Path.Combine(AppRoot, CACHE_ROOT);
 
         static DataCache()
         {
+            if (!Directory.Exists(CacheDirectory))
+            {
+                _ = Directory.CreateDirectory(CacheDirectory);
+            }
+
+            CACHE_DISK = File.Open(Path.Combine(CacheDirectory, "BlockAllocationTable.dat"), FileMode.OpenOrCreate);
+            MEM_CACHE_DISK = File.Open(Path.Combine(CacheDirectory, "BlockAllocationTable.mem"), FileMode.OpenOrCreate);
+            IdDictionary = new(Path.Combine(CacheDirectory, "Ids.dict"), new StringSerialization(), new UIntSerialization());
+            DataPositions = new(Path.Combine(CacheDirectory, "BlockAllocationTable.dict"), new ULongSerialization(), false);
+
             TempCacheWorker = new BackgroundWorker();
             TempCacheWorker.DoWork += TempCacheWorker_DoWork;
             TempCacheWorker.RunWorkerAsync();

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Penguin.Vfs.Caches;
+﻿using Penguin.Vfs.Caches;
 using Penguin.Vfs.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Penguin.Vfs
 {
@@ -19,6 +19,15 @@ namespace Penguin.Vfs
             return parent.EnumerateDirectories(recursive);
         }
 
+        public IEnumerable<IFile> EnumerateFiles(string path, bool recursive) => this.EnumerateFiles(new PathPart(path), recursive);
+
+        public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
+        {
+            IHasFiles fse = (IHasFiles)this.FindNode(path);
+
+            return fse.EnumerateFiles(recursive);
+        }
+
         public IStream OpenFile(string path)
         {
             PathPart pathPart = new PathPart(path);
@@ -31,15 +40,6 @@ namespace Penguin.Vfs
             }) as IFileSystem;
 
             return fs.Open(new VirtualUri(pathPart));
-        }
-
-        public IEnumerable<IFile> EnumerateFiles(string path, bool recursive) => this.EnumerateFiles(new PathPart(path), recursive);
-
-        public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
-        {
-            IHasFiles fse = (IHasFiles)this.FindNode(path);
-
-            return fse.EnumerateFiles(recursive);
         }
 
         private IFileSystemEntry FindNode(PathPart path)

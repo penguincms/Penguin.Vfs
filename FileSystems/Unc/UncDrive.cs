@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Penguin.Vfs.Caches;
+﻿using Penguin.Vfs.Caches;
 using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Local

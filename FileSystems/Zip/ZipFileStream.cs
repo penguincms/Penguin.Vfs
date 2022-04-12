@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Penguin.Vfs.Interfaces;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Zip
 {

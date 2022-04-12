@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileTypes
 {

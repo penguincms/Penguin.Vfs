@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Penguin.Vfs.Extensions;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Zip
 {
@@ -34,6 +34,8 @@ namespace Penguin.Vfs.FileSystems.Zip
         }
 
         public bool IsRecursive => false;
+        public DateTime LastModified { get; }
+        public long Length { get; }
         public PathPart MountPoint => this.ResolutionPackage.VirtualUri.FullName;
         public ResolveUriPackage ResolutionPackage { get; }
         public IUri Uri => this.ResolutionPackage.VirtualUri;
@@ -82,9 +84,6 @@ namespace Penguin.Vfs.FileSystems.Zip
                 return c;
             }
         }
-
-        public DateTime LastModified { get; }
-        public long Length { get; }
 
         public ZipFileSystem(ResolveUriPackage resolveUriPackage)
         {

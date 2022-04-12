@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Local
 {
@@ -16,11 +16,10 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public bool IsRecursive { get; private set; }
 
+        public DateTime LastModified { get; internal set; }
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
-
-        public DateTime LastModified { get; internal set; }
 
         public LocalDirectoryEntry(ResolveUriPackage resolveUriPackage)
         {

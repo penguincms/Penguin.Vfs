@@ -7,18 +7,19 @@ namespace Penguin.Vfs.FileSystems.Local
     {
         private bool disposedValue;
         private ResolveUriPackage ResolutionPackage;
+        public DateTime LastModified { get; internal set; }
+        public long Length { get; internal set; }
         ResolveUriPackage IFileSystemEntry.ResolutionPackage { get; }
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
 
         public LocalFileEntry(ResolveUriPackage resolveUriPackage)
         {
-            this.LastModified = new System.IO.FileInfo(resolveUriPackage.VirtualUri.FullName.Value).LastWriteTime;
-            this.Length = new System.IO.FileInfo(resolveUriPackage.VirtualUri.FullName.Value).Length;
+            this.LastModified = resolveUriPackage.LastModified;
+            this.Length = resolveUriPackage.Length;
             this.ResolutionPackage = resolveUriPackage;
         }
-        public long Length { get; internal set; }
-        public DateTime LastModified { get; internal set; }
+
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

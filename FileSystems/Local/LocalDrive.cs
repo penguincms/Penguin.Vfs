@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Penguin.Vfs.Extensions;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Local
 {
@@ -21,10 +21,10 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public bool IsRecursive => false;
 
+        public DateTime LastModified => new DirectoryInfo(this.Uri.FullName.Value).LastWriteTime;
         public PathPart MountPoint { get; set; }
         ResolveUriPackage IFileSystemEntry.ResolutionPackage => this.ResolutionPackage;
         public IUri Uri { get; }
-        public DateTime LastModified => new DirectoryInfo(this.Uri.FullName.Value).LastWriteTime;
 
         public LocalDrive(ResolveUriPackage resolveUriPackage)
         {
@@ -168,7 +168,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
                         foreach (string file in files)
                         {
-                            FileInfo fi = new FileInfo(file);
+                            FileInfo fi = new(file);
                             ResolveUriPackage newPackage = this.ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(this.MountPoint))
                                                                                   .WithFileInfo(fi.LastWriteTime, fi.Length);
 

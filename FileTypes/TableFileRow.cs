@@ -1,13 +1,13 @@
 ﻿using Penguin.Extensions.Strings;
+using Penguin.Vfs.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileTypes
 {
     internal class TableFileRow : IDataRow
     {
-        private string Source;
+        private readonly string Source;
 
         public TableFileRow(string source)
         {

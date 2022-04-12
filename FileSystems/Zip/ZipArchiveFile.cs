@@ -7,12 +7,11 @@ namespace Penguin.Vfs.FileSystems.Zip
     {
         private bool disposedValue;
 
+        public DateTime LastModified { get; internal set; }
+        public long Length { get; }
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
-
-        public DateTime LastModified { get; internal set; }
-        public long Length { get; }
 
         public ZipArchiveFile(ResolveUriPackage resolveUriPackage)
         {

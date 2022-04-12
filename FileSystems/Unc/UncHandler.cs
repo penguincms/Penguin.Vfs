@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Penguin.Vfs.Interfaces;
+﻿using Penguin.Vfs.Interfaces;
+using System.Linq;
 
 namespace Penguin.Vfs.FileSystems.Local
 {

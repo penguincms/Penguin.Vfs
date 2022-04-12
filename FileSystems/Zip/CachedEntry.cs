@@ -8,10 +8,10 @@ namespace Penguin.Vfs.FileSystems.Zip
         {
             public string FullName { get; internal set; }
 
-            public string Name { get; internal set; }
-
             public DateTime LastModified { get; internal set; }
             public long Length { get; internal set; }
+            public string Name { get; internal set; }
+
             public string GetDirectoryName()
             {
                 string n = this.Name;

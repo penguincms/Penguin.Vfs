@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Penguin.Vfs.FileSystems.Cache;
+using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Penguin.Vfs.FileSystems.Cache;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.Extensions
 {

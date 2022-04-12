@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Penguin.Vfs.Extensions;
+using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
-using Penguin.Vfs.Extensions;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Zip
 {
@@ -83,11 +83,10 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         public bool IsRecursive => false;
 
+        public DateTime LastModified { get; internal set; }
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => this.ResolutionPackage.VirtualUri;
-
-        public DateTime LastModified { get; internal set; }
 
         public ZipArchiveDirectory(ResolveUriPackage resolveUriPackage)
         {

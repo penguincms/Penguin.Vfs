@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs
 {
@@ -27,7 +27,6 @@ namespace Penguin.Vfs
         {
             IFileSystemEntry toReturn = (T)Activator.CreateInstance(typeof(T), new object[] { resolveUriPackage });
 
-            
             return toReturn;
         }
 

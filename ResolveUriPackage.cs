@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs
 {
@@ -9,8 +9,7 @@ namespace Penguin.Vfs
         private HashSet<string> cachedDirectories;
         private HashSet<string> cachedFiles;
         private Dictionary<string, HashSet<string>> directoryContents;
-        public DateTime LastModified { get; set; }
-        public long Length { get; set; }
+
         public IReadOnlySet<string> CachedDirectories
         {
             get
@@ -40,6 +39,8 @@ namespace Penguin.Vfs
 
         public IFileSystemEntryFactory EntryFactory { get; set; }
         public IFileSystem FileSystem { get; set; }
+        public DateTime LastModified { get; set; }
+        public long Length { get; set; }
         public Dictionary<string, IFileSystemEntry> SessionCache { get; set; }
         public IUri VirtualUri { get; set; }
 
@@ -115,18 +116,18 @@ namespace Penguin.Vfs
             };
         }
 
-        public ResolveUriPackage WithFileSystem(IFileSystem fileSystem)
-        {
-            ResolveUriPackage toReturn = this.Copy();
-            toReturn.FileSystem = fileSystem;
-            return toReturn;
-        }
-
         public ResolveUriPackage WithFileInfo(DateTime lastModified, long length)
         {
             ResolveUriPackage toReturn = this.Copy();
             toReturn.LastModified = lastModified;
             toReturn.Length = length;
+            return toReturn;
+        }
+
+        public ResolveUriPackage WithFileSystem(IFileSystem fileSystem)
+        {
+            ResolveUriPackage toReturn = this.Copy();
+            toReturn.FileSystem = fileSystem;
             return toReturn;
         }
 

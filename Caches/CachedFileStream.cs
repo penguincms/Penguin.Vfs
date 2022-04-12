@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Penguin.Vfs.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.Caches
 {

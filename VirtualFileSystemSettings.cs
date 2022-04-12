@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Penguin.Vfs.FileSystems.Local;
+﻿using Penguin.Vfs.FileSystems.Local;
 using Penguin.Vfs.FileSystems.Zip;
 using Penguin.Vfs.FileTypes;
 using Penguin.Vfs.Interfaces;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Penguin.Vfs
 {

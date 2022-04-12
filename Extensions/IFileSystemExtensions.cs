@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Penguin.Vfs.Interfaces;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.Extensions
 {

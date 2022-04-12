@@ -140,22 +140,22 @@ namespace Penguin.Vfs
 
         public bool StartsWith(string v)
         {
-            if(v.Length > this._path.Length)
+            if (v.Length > this._path.Length)
             {
                 return false;
             }
 
-            for(int i = 0; i < v.Length; i++)
+            for (int i = 0; i < v.Length; i++)
             {
                 bool aSlash = this._path[i] == '/';
                 bool bSlash = v[i] is '/' or '\\';
-                
-                if(aSlash && bSlash)
+
+                if (aSlash && bSlash)
                 {
                     continue;
                 }
 
-                if(this._path[i] != v[i])
+                if (this._path[i] != v[i])
                 {
                     return false;
                 }

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Penguin.Vfs.Interfaces;
+using System.Collections.Generic;
 using System.IO;
-using Penguin.Vfs.Interfaces;
 
 namespace Penguin.Vfs.FileSystems.Local
 {
