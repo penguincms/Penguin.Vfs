@@ -65,6 +65,11 @@ namespace Penguin.Vfs.Caches
 
         public static byte[] ReadBlock(uint fileId, uint blockNumber, Stream sourceFile)
         {
+            if (sourceFile is null)
+            {
+                throw new ArgumentNullException(nameof(sourceFile));
+            }
+
             ulong key = GetBlockAllocationKey(fileId, blockNumber);
             long sourcepos = sourceFile.Position;
             lock (CacheLock)

@@ -207,6 +207,11 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         public IStream Open(IUri path)
         {
+            if (path is null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
 
             if (!path.LocalPath.HasValue)
@@ -251,6 +256,10 @@ namespace Penguin.Vfs.FileSystems.Zip
                 catch (System.IO.InvalidDataException)
                 {
                 }
+            }
+            catch(System.IO.IOException iox) when (iox.Message.Contains("used by another process", StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.WriteLine($"File '{this.Uri}' is being used by another process");
             }
             catch (System.IO.InvalidDataException)
             {

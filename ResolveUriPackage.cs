@@ -46,6 +46,11 @@ namespace Penguin.Vfs
 
         public ResolveUriPackage AppendChild(string name, IFileSystem fileSystem = null)
         {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             if (name.Contains("/") || name.Contains("\\"))
             {
                 //Debugger.Break();
@@ -79,6 +84,11 @@ namespace Penguin.Vfs
                 this.directoryContents.Add(parent, target);
             }
 
+            if (children is null)
+            {
+                throw new ArgumentNullException(nameof(children));
+            }
+
             this.cachedDirectories ??= new();
             foreach (string f in children)
             {
@@ -93,6 +103,11 @@ namespace Penguin.Vfs
             {
                 target = new HashSet<string>();
                 this.directoryContents.Add(parent, target);
+            }
+
+            if (children is null)
+            {
+                throw new ArgumentNullException(nameof(children));
             }
 
             this.cachedFiles ??= new();

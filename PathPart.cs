@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Penguin.Vfs
@@ -84,6 +85,11 @@ namespace Penguin.Vfs
 
         public PathPart(string path)
         {
+            if (path is null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
             this._path = path.Replace("\\", "/");
         }
 
@@ -93,6 +99,11 @@ namespace Penguin.Vfs
 
         public PathPart(IEnumerable<string> parts)
         {
+            if (parts is null)
+            {
+                throw new ArgumentNullException(nameof(parts));
+            }
+
             this._path = string.Empty;
 
             foreach (string p in parts)
@@ -119,6 +130,11 @@ namespace Penguin.Vfs
 
         public PathPart MakeLocal(string root)
         {
+            if (string.IsNullOrWhiteSpace(root))
+            {
+                throw new System.ArgumentException($"'{nameof(root)}' cannot be null or whitespace.", nameof(root));
+            }
+
             string path = this.Value;
 
             if (path.StartsWith(root))
@@ -140,6 +156,11 @@ namespace Penguin.Vfs
 
         public bool StartsWith(string v)
         {
+            if (string.IsNullOrWhiteSpace(v))
+            {
+                throw new System.ArgumentException($"'{nameof(v)}' cannot be null or whitespace.", nameof(v));
+            }
+
             if (v.Length > this._path.Length)
             {
                 return false;

@@ -1,5 +1,6 @@
 ﻿using Penguin.Vfs.Caches;
 using Penguin.Vfs.Interfaces;
+using System;
 
 namespace Penguin.Vfs.FileSystems.Local
 {
@@ -26,7 +27,15 @@ namespace Penguin.Vfs.FileSystems.Local
             return base.Find(path);
         }
 
-        public override IStream Open(IUri uri) => new CachedFileStream(uri.FullName);
+        public override IStream Open(IUri uri)
+        {
+            if (uri is null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            return new CachedFileStream(uri.FullName);
+        }
 
         public override void SetMount(PathPart path) => this.MountPoint = path;
     }

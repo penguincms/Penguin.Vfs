@@ -67,7 +67,15 @@ namespace Penguin.Vfs.FileSystems.Local
             return Directory.Exists(uri);
         }
 
-        public bool DirectoryExists(IUri uri) => this.DirectoryExists(uri.FullName.WindowsValue);
+        public bool DirectoryExists(IUri uri)
+        {
+            if (uri is null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            return this.DirectoryExists(uri.FullName.WindowsValue);
+        }
 
         public void Dispose()
         {
@@ -239,7 +247,15 @@ namespace Penguin.Vfs.FileSystems.Local
             return File.Exists(uri);
         }
 
-        public bool FileExists(IUri uri) => this.FileExists(uri.FullName.WindowsValue);
+        public bool FileExists(IUri uri)
+        {
+            if (uri is null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            return this.FileExists(uri.FullName.WindowsValue);
+        }
 
         public virtual IFileSystemEntry Find(PathPart path)
         {
@@ -255,7 +271,15 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public string GetWindowsRelative(PathPart path) => path.HasValue ? this.MountPoint.Append(path).WindowsValue : this.MountPoint.WindowsValue + "\\";
 
-        public virtual IStream Open(IUri uri) => new FileStream(uri.FullName);
+        public virtual IStream Open(IUri uri)
+        {
+            if (uri is null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+
+            return new FileStream(uri.FullName);
+        }
 
         public virtual void SetMount(PathPart path)
         {

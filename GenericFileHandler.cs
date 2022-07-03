@@ -10,6 +10,11 @@ namespace Penguin.Vfs
 
         public GenericFileHandler(params string[] extensions)
         {
+            if (extensions is null)
+            {
+                throw new ArgumentNullException(nameof(extensions));
+            }
+
             foreach (string e in extensions)
             {
                 string extension = e;
