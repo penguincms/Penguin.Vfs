@@ -1,4 +1,4 @@
-﻿using Penguin.Extensions.Strings;
+﻿using Penguin.Extensions.String;
 using Penguin.Vfs.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
