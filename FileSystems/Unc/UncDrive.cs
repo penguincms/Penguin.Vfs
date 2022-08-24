@@ -10,7 +10,7 @@ namespace Penguin.Vfs.FileSystems.Local
         {
         }
 
-        public override IFileSystemEntry Find(PathPart path)
+        public override IFileSystemEntry Find(PathPart path, bool expectingFile)
         {
             string realLoc = this.GetWindowsRelative(path);
 
@@ -21,10 +21,22 @@ namespace Penguin.Vfs.FileSystems.Local
 
             if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
             {
-                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(new VirtualUri(this.MountPoint, path)));
+
+                VirtualUri toSearch = null;
+
+                if (this.MountPoint.Value == path.Value)
+                {
+                    toSearch = new VirtualUri(this.MountPoint);
+                }
+                else
+                {
+                    toSearch = new VirtualUri(this.MountPoint, path);
+                }
+
+                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(toSearch));
             }
 
-            return base.Find(path);
+            return base.Find(path, expectingFile);
         }
 
         public override IStream Open(IUri uri)

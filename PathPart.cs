@@ -14,7 +14,7 @@ namespace Penguin.Vfs
         public PathPart Extension => new(System.IO.Path.GetExtension(this.WindowsValue));
 
         public PathPart FileNameWithoutExtension => new(System.IO.Path.GetFileNameWithoutExtension(this.WindowsValue));
-
+        public PathPart FileName => new(System.IO.Path.GetFileName(this.WindowsValue));
         public bool HasValue => !string.IsNullOrWhiteSpace(this._path);
 
         public int Length => this.HasValue ? this.Value.Length : 0;
@@ -58,7 +58,7 @@ namespace Penguin.Vfs
                             s++;
                         }
 
-                        if (s == 3)
+                        if (s == 4)
                         {
                             break;
                         }

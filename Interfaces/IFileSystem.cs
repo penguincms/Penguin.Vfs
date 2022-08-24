@@ -16,7 +16,7 @@ namespace Penguin.Vfs.Interfaces
 
         bool FileExists(IUri uri);
 
-        IFileSystemEntry Find(PathPart pathPart);
+        IFileSystemEntry Find(PathPart pathPart, bool expectingFile);
 
         IStream Open(IUri uri);
     }

@@ -86,7 +86,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public IEnumerable<IDirectory> EnumerateDirectories(PathPart path, bool recursive)
         {
-            if (this.Find(path) is IDirectory root)
+            if (this.Find(path, false) is IDirectory root)
             {
                 IFileSystem entryFileSystem = root.ResolutionPackage.FileSystem ?? this;
 
@@ -106,9 +106,11 @@ namespace Penguin.Vfs.FileSystems.Local
                     }
                     catch (System.UnauthorizedAccessException)
                     {
+                        throw;
                     }
                     catch (System.IO.DirectoryNotFoundException)
                     {
+                        throw;
                     }
 
                     this.ResolutionPackage.CacheFiles(toSearch, files);
@@ -119,7 +121,15 @@ namespace Penguin.Vfs.FileSystems.Local
 
                     foreach (string fse in allPaths)
                     {
-                        VirtualUri itemPath = new(this.MountPoint, path.Append(fse));
+                        VirtualUri itemPath;
+                        
+                        if(this.MountPoint.Value == path.Value)
+                        {
+                            itemPath = new(this.MountPoint, new PathPart(fse));
+                        } else
+                        {
+                            itemPath = new(this.MountPoint, path.Append(fse));
+                        }
 
                         if (this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(itemPath)) is IDirectory cfse)
                         {
@@ -127,7 +137,17 @@ namespace Penguin.Vfs.FileSystems.Local
 
                             if (recursive && !cfse.IsRecursive)
                             {
-                                foreach (IDirectory d in cfse.EnumerateDirectories(true))
+                                List<IDirectory> cfseDirectories = new List<IDirectory>();
+
+                                try
+                                {
+                                    cfseDirectories = cfse.EnumerateDirectories(true).ToList();
+                                } catch(IOException iex) when (iex.Message.Contains("being used by another process"))
+                                {
+
+                                }
+
+                                foreach (IDirectory d in cfseDirectories)
                                 {
                                     yield return d;
                                 }
@@ -149,7 +169,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
         {
-            if (this.Find(path) is IDirectory root)
+            if (this.Find(path, false) is IDirectory root)
             {
                 IFileSystem entryFileSystem = root.ResolutionPackage.FileSystem ?? this;
 
@@ -189,8 +209,11 @@ namespace Penguin.Vfs.FileSystems.Local
 
                     if (recursive)
                     {
-                        foreach (IDirectory d in this.EnumerateDirectories(path, true))
+                        List<IDirectory> directories = this.EnumerateDirectories(path, true).ToList();
+
+                        foreach (IDirectory d in directories)
                         {
+                            Debug.WriteLine($"Enumerating files in: {d.Uri}");
                             List<IFile> files = new();
                             try
                             {
@@ -257,8 +280,13 @@ namespace Penguin.Vfs.FileSystems.Local
             return this.FileExists(uri.FullName.WindowsValue);
         }
 
-        public virtual IFileSystemEntry Find(PathPart path)
+        public virtual IFileSystemEntry Find(PathPart path, bool expectingFile)
         {
+            if(this.MountPoint.Value == path.Value)
+            {
+                return this;
+            }
+
             string realLoc = this.GetWindowsRelative(path);
 
             if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
@@ -266,10 +294,25 @@ namespace Penguin.Vfs.FileSystems.Local
                 return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(new VirtualUri(this.MountPoint, path)));
             }
 
-            return this.GenericFind(path);
+            return this.GenericFind(path, expectingFile);
         }
 
-        public string GetWindowsRelative(PathPart path) => path.HasValue ? this.MountPoint.Append(path).WindowsValue : this.MountPoint.WindowsValue + "\\";
+        public string GetWindowsRelative(PathPart path)
+        {
+            if (!path.HasValue || this.MountPoint.Value == path.Value)
+            {
+                if (this.MountPoint.WindowsValue.EndsWith("\\"))
+                {
+                    return this.MountPoint.WindowsValue;
+                }
+                else
+                {
+                    return this.MountPoint.WindowsValue + "\\";
+                }
+            }
+
+            return this.MountPoint.Append(path).WindowsValue;
+        }
 
         public virtual IStream Open(IUri uri)
         {

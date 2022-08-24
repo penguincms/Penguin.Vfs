@@ -2,6 +2,7 @@
 using Penguin.Vfs.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using Penguin.Vfs.Extensions;
 
 namespace Penguin.Vfs
 {
@@ -14,7 +15,7 @@ namespace Penguin.Vfs
 
         public IEnumerable<IDirectory> EnumerateDirectories(PathPart pathPart, bool recursive)
         {
-            IHasDirectories parent = (IHasDirectories)this.FindNode(pathPart);
+            IHasDirectories parent = (IHasDirectories)this.FindNode(pathPart, false);
 
             return parent.EnumerateDirectories(recursive);
         }
@@ -23,26 +24,19 @@ namespace Penguin.Vfs
 
         public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
         {
-            IHasFiles fse = (IHasFiles)this.FindNode(path);
+            IHasFiles fse = (IHasFiles)this.FindNode(path, false);
 
             return fse.EnumerateFiles(recursive);
         }
 
         public IStream OpenFile(string path)
         {
-            PathPart pathPart = new PathPart(path);
+            IFile file = this.FindNode(new PathPart(path), true) as IFile;
 
-            IFileSystem fs = this.VirtualFileSystemSettings.Resolve(new ResolveUriPackage()
-            {
-                VirtualUri = new VirtualUri(pathPart.Chunks.First()),
-                EntryFactory = this.VirtualFileSystemSettings,
-                SessionCache = new Dictionary<string, IFileSystemEntry>()
-            }) as IFileSystem;
-
-            return fs.Open(new VirtualUri(pathPart));
+            return file.Open();
         }
 
-        private IFileSystemEntry FindNode(PathPart path)
+        private IFileSystemEntry FindNode(PathPart path, bool expectingFile)
         {
             IFileSystem fs = this.VirtualFileSystemSettings.Resolve(new ResolveUriPackage()
             {
@@ -51,7 +45,7 @@ namespace Penguin.Vfs
                 SessionCache = new Dictionary<string, IFileSystemEntry>()
             }) as IFileSystem;
 
-            return fs.Find(path.MakeLocal(path.Chunks.First()));
+            return fs.Find(path.MakeLocal(path.Chunks.First()), expectingFile);
         }
     }
 }

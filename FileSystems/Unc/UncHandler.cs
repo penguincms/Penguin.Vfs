@@ -18,7 +18,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
             string wVal = new PathPart(pUri).WindowsValue;
 
-            return wVal.Count(c => c == '\\') == 3 && wVal.StartsWith("\\\\") && wVal.EndsWith("\\") && !new LocalDriveHandler().IsMatch(resolveUriPackage);
+            return wVal.Count(c => c == '\\') == 4 && wVal.StartsWith("\\\\") && wVal.EndsWith("\\") && !new LocalDriveHandler().IsMatch(resolveUriPackage);
         }
     }
 }

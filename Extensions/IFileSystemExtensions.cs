@@ -8,14 +8,14 @@ namespace Penguin.Vfs.Extensions
 {
     public static class IFileSystemExtensions
     {
-        public static IFileSystemEntry GenericFind(this IFileSystem fileSystem, PathPart path)
+        public static IFileSystemEntry GenericFind(this IFileSystem fileSystem, PathPart path, bool expectingFile)
         {
             if (fileSystem is null)
             {
                 throw new ArgumentNullException(nameof(fileSystem));
             }
 
-            Stack<PathPart> chunks = path.Chunks.ToStack();
+            Stack<PathPart> chunks = path.Chunks.Reverse().ToStack();
 
             ResolveUriPackage resolveUriPackage = fileSystem.ResolutionPackage;
 
@@ -28,12 +28,32 @@ namespace Penguin.Vfs.Extensions
                     throw new FileNotFoundException();
                 }
 
-                topEntry = (topEntry as IHasDirectories).Directories.Where(d => d.Uri.Name.Value == chunks.Pop().Value).FirstOrDefault();
+                string partName = chunks.Pop().Value;
 
-                if (topEntry is IFileSystem fs)
+                if (chunks.Count == 0 && expectingFile)
                 {
-                    return fs.Find(new PathPart(chunks));
+                    topEntry = (topEntry as IHasFiles).Files.Where(d => d.Uri.Name.Value == partName).FirstOrDefault();
+                } else { 
+                    topEntry = (topEntry as IHasDirectories).Directories.Where(d => d.Uri.Name.Value == partName).FirstOrDefault();
+
+                    if (topEntry is null)
+                    {
+                        if (expectingFile)
+                        {
+                            throw new FileNotFoundException();
+                        }
+                        else
+                        {
+                            throw new DirectoryNotFoundException();
+                        }
+                    }
+
+                    if (topEntry is IFileSystem fs)
+                    {
+                        return fs.Find(new PathPart(chunks.Reverse()), expectingFile);
+                    }
                 }
+
             }
 
             return topEntry;

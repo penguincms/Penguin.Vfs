@@ -203,7 +203,7 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         public bool FileExists(IUri uri) => this.CachedEntries.Any(e => uri.LocalPath.Value == uri.LocalPath.Value);
 
-        public IFileSystemEntry Find(PathPart path) => this.GenericFind(path);
+        public IFileSystemEntry Find(PathPart path, bool expectingFile) => this.GenericFind(path, expectingFile);
 
         public IStream Open(IUri path)
         {
@@ -231,13 +231,13 @@ namespace Penguin.Vfs.FileSystems.Zip
         }
 
         private IEnumerable<ZipArchiveEntry> TryGetEntries()
-        {
-            IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
-
+        {         
             IEnumerator<ZipArchiveEntry> enumerator = null;
 
             try
             {
+                IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
+
                 enumerator = new ZipArchive(stream.GetStream()).Entries.GetEnumerator();
             }
             catch (System.IO.InvalidDataException) when (Debugger.IsAttached)

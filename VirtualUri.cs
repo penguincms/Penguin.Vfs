@@ -20,7 +20,7 @@ namespace Penguin.Vfs
 
         public VirtualUri(PathPart mountPoint, PathPart localPath)
         {
-            this.Name = localPath.FileNameWithoutExtension;
+            this.Name = localPath.FileName;
             this.Extension = localPath.Extension;
             this.MountPoint = mountPoint;
             this.LocalPath = localPath;
