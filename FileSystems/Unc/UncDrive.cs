@@ -22,8 +22,7 @@ namespace Penguin.Vfs.FileSystems.Local
             if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
             {
 
-                VirtualUri toSearch = null;
-
+                VirtualUri toSearch;
                 if (this.MountPoint.Value == path.Value)
                 {
                     toSearch = new VirtualUri(this.MountPoint);
@@ -33,7 +32,7 @@ namespace Penguin.Vfs.FileSystems.Local
                     toSearch = new VirtualUri(this.MountPoint, path);
                 }
 
-                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(toSearch));
+                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(toSearch), false);
             }
 
             return base.Find(path, expectingFile);

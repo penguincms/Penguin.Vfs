@@ -2,7 +2,7 @@
 {
     public interface IFileSystemEntryFactory
     {
-        public IFileSystemEntry Resolve(ResolveUriPackage resolveUriPackage);
+        public IFileSystemEntry Resolve(ResolveUriPackage resolveUriPackage, bool cache);
 
         //public void RegisterStreamSource(Func<string, Stream> resolveFunction);
 

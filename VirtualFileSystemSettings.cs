@@ -23,12 +23,16 @@ namespace Penguin.Vfs
             new GenericFileHandler<LogFile>(".txt", ".log")
         };
 
-        public IFileSystemEntry Resolve(ResolveUriPackage resolveUriPackage)
+        public IFileSystemEntry Resolve(ResolveUriPackage resolveUriPackage, bool cache)
         {
             if (!resolveUriPackage.SessionCache.TryGetValue(resolveUriPackage.VirtualUri.FullName.Value, out IFileSystemEntry fse))
             {
                 fse = this.ResolveNoCache(resolveUriPackage);
-                resolveUriPackage.SessionCache.Add(resolveUriPackage.VirtualUri.FullName.Value, fse);
+
+                if (cache)
+                {
+                    resolveUriPackage.SessionCache.Add(resolveUriPackage.VirtualUri.FullName.Value, fse);
+                }
             }
 
             return fse;

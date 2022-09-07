@@ -131,7 +131,7 @@ namespace Penguin.Vfs.FileSystems.Local
                             itemPath = new(this.MountPoint, path.Append(fse));
                         }
 
-                        if (this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(itemPath)) is IDirectory cfse)
+                        if (this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(itemPath), false) is IDirectory cfse)
                         {
                             yield return cfse;
 
@@ -200,7 +200,7 @@ namespace Penguin.Vfs.FileSystems.Local
                             ResolveUriPackage newPackage = this.ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(this.MountPoint))
                                                                                   .WithFileInfo(fi.LastWriteTime, fi.Length);
 
-                            if (this.ResolutionPackage.EntryFactory.Resolve(newPackage) is IFile f)
+                            if (this.ResolutionPackage.EntryFactory.Resolve(newPackage, true) is IFile f)
                             {
                                 yield return f;
                             }
@@ -291,7 +291,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
             if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
             {
-                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(new VirtualUri(this.MountPoint, path)));
+                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(new VirtualUri(this.MountPoint, path)), false);
             }
 
             return this.GenericFind(path, expectingFile);

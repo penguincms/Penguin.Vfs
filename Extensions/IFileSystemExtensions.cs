@@ -19,7 +19,7 @@ namespace Penguin.Vfs.Extensions
 
             ResolveUriPackage resolveUriPackage = fileSystem.ResolutionPackage;
 
-            IFileSystemEntry topEntry = fileSystem.ResolutionPackage.EntryFactory.Resolve(resolveUriPackage);
+            IFileSystemEntry topEntry = fileSystem.ResolutionPackage.EntryFactory.Resolve(resolveUriPackage, true);
 
             while (chunks.Any())
             {

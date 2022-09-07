@@ -43,7 +43,7 @@ namespace Penguin.Vfs
                 VirtualUri = new VirtualUri(path.Chunks.First()),
                 EntryFactory = this.VirtualFileSystemSettings,
                 SessionCache = new Dictionary<string, IFileSystemEntry>()
-            }) as IFileSystem;
+            }, false) as IFileSystem;
 
             return fs.Find(path.MakeLocal(path.Chunks.First()), expectingFile);
         }

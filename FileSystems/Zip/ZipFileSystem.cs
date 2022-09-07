@@ -158,7 +158,7 @@ namespace Penguin.Vfs.FileSystems.Zip
                     }
 
                     yield return this.ResolutionPackage.EntryFactory.Resolve(
-                        this.ResolutionPackage.AppendChild(zipArchiveEntry.Name, this).WithFileInfo(zipArchiveEntry.LastModified, zipArchiveEntry.Length)) as IFile;
+                        this.ResolutionPackage.AppendChild(zipArchiveEntry.Name, this).WithFileInfo(zipArchiveEntry.LastModified, zipArchiveEntry.Length), true) as IFile;
                 }
                 else
                 {
@@ -176,7 +176,7 @@ namespace Penguin.Vfs.FileSystems.Zip
                         continue;
                     }
 
-                    if (this.ResolutionPackage.EntryFactory.Resolve((this.ResolutionPackage.WithFileSystem(this).WithUri(new VirtualUri(this.MountPoint, path.Append(zipArchiveEntry.Name))))) is IFile f)
+                    if (this.ResolutionPackage.EntryFactory.Resolve((this.ResolutionPackage.WithFileSystem(this).WithUri(new VirtualUri(this.MountPoint, path.Append(zipArchiveEntry.Name)))),false) is IFile f)
                     {
                         yield return f;
                     }
