@@ -1,4 +1,5 @@
 ﻿using Penguin.Vfs.FileSystems.Local;
+using Penguin.Vfs.FileSystems.Unc;
 using Penguin.Vfs.FileSystems.Zip;
 using Penguin.Vfs.FileTypes;
 using Penguin.Vfs.Interfaces;
@@ -11,7 +12,6 @@ namespace Penguin.Vfs
     {
         public IFileSystemEntryHandler DirectoryHandler { get; set; } = new LocalDirectoryHandler();
 
-        //Stream IFileSystemEntryFactory.OpenStream(string path) => throw new NotImplementedException();
         public IFileSystemEntryHandler FileHandler { get; set; } = new LocalFileHandler();
 
         public List<IFileSystemEntryHandler> Handlers { get; } = new List<IFileSystemEntryHandler>()
@@ -27,7 +27,7 @@ namespace Penguin.Vfs
         {
             if (!resolveUriPackage.SessionCache.TryGetValue(resolveUriPackage.VirtualUri.FullName.Value, out IFileSystemEntry fse))
             {
-                fse = this.ResolveNoCache(resolveUriPackage);
+                fse = ResolveNoCache(resolveUriPackage);
 
                 if (cache)
                 {
@@ -40,7 +40,7 @@ namespace Penguin.Vfs
 
         private IFileSystemEntry ResolveNoCache(ResolveUriPackage resolveUriPackage)
         {
-            foreach (IFileSystemEntryHandler handler in this.Handlers)
+            foreach (IFileSystemEntryHandler handler in Handlers)
             {
                 if (handler.IsMatch(resolveUriPackage))
                 {
@@ -48,17 +48,9 @@ namespace Penguin.Vfs
                 }
             }
 
-            if (this.DirectoryHandler.IsMatch(resolveUriPackage))
-            {
-                return this.DirectoryHandler.Create(resolveUriPackage);
-            }
-
-            if (this.FileHandler.IsMatch(resolveUriPackage))
-            {
-                return this.FileHandler.Create(resolveUriPackage);
-            }
-
-            throw new FileNotFoundException();
+            return DirectoryHandler.IsMatch(resolveUriPackage)
+                ? DirectoryHandler.Create(resolveUriPackage)
+                : FileHandler.IsMatch(resolveUriPackage) ? FileHandler.Create(resolveUriPackage) : throw new FileNotFoundException();
         }
     }
 }

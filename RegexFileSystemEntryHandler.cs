@@ -9,11 +9,14 @@ namespace Penguin.Vfs
 
         protected RegexFileSystemEntryHandler(string regex)
         {
-            this.Regex = regex;
+            Regex = regex;
         }
 
         public abstract IFileSystemEntry Create(ResolveUriPackage resolveUriPackage);
 
-        public bool IsMatch(ResolveUriPackage resolveUriPackage) => System.Text.RegularExpressions.Regex.IsMatch(resolveUriPackage.VirtualUri.FullName.Value, this.Regex, this.RegexOptions);
+        public bool IsMatch(ResolveUriPackage resolveUriPackage)
+        {
+            return System.Text.RegularExpressions.Regex.IsMatch(resolveUriPackage.VirtualUri.FullName.Value, Regex, RegexOptions);
+        }
     }
 }

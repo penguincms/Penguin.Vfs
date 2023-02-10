@@ -12,7 +12,7 @@ public static class NativeMethods
 
     [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern IntPtr CreateFile(
-            [MarshalAs(UnmanagedType.LPTStr)] string filename,
+            [MarshalAs(UnmanagedType.LPWStr)] string filename,
             [MarshalAs(UnmanagedType.U4)] uint access,
             [MarshalAs(UnmanagedType.U4)] FileShare share,
             IntPtr securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
@@ -38,12 +38,7 @@ public static class NativeMethods
         {
             StringBuilder sb = new(1024);
             uint res = GetFinalPathNameByHandle(h, sb, 1024, 0);
-            if (res == 0)
-            {
-                throw new Win32Exception();
-            }
-
-            return sb.ToString();
+            return res == 0 ? throw new Win32Exception() : sb.ToString();
         }
         finally
         {
@@ -70,5 +65,5 @@ public static class NativeMethods
     private static extern bool CloseHandle(IntPtr hObject);
 
     [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    private static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
+    private static extern uint GetFinalPathNameByHandle(IntPtr hFile, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpszFilePath, uint cchFilePath, uint dwFlags);
 }

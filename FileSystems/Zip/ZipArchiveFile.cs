@@ -11,25 +11,25 @@ namespace Penguin.Vfs.FileSystems.Zip
         public long Length { get; }
         public ResolveUriPackage ResolutionPackage { get; }
 
-        public IUri Uri => this.ResolutionPackage.VirtualUri;
+        public IUri Uri => ResolutionPackage.VirtualUri;
 
         public ZipArchiveFile(ResolveUriPackage resolveUriPackage)
         {
-            this.ResolutionPackage = resolveUriPackage;
-            this.LastModified = resolveUriPackage.LastModified;
-            this.Length = resolveUriPackage.Length;
+            ResolutionPackage = resolveUriPackage;
+            LastModified = resolveUriPackage.LastModified;
+            Length = resolveUriPackage.Length;
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             System.GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
@@ -38,7 +38,7 @@ namespace Penguin.Vfs.FileSystems.Zip
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 

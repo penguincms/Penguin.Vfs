@@ -4,33 +4,26 @@ using System.Linq;
 
 namespace Penguin.Vfs
 {
-    public struct PathPart
+    public struct PathPart : IEquatable<PathPart>
     {
-        private readonly string _path;
+        public IEnumerable<PathPart> Chunks => PathChunks.Select(s => new PathPart(s));
+        public int Depth => Value.Trim('/').Count(c => c == '/') + 1;
 
-        public IEnumerable<PathPart> Chunks => this.PathChunks.Select(s => new PathPart(s));
-        public int Depth => this.Value.Trim('/').Count(c => c == '/') + 1;
+        public PathPart Extension => new(System.IO.Path.GetExtension(WindowsValue));
 
-        public PathPart Extension => new(System.IO.Path.GetExtension(this.WindowsValue));
+        public PathPart FileNameWithoutExtension => new(System.IO.Path.GetFileNameWithoutExtension(WindowsValue));
+        public PathPart FileName => new(System.IO.Path.GetFileName(WindowsValue));
+        public bool HasValue => !string.IsNullOrWhiteSpace(Value);
 
-        public PathPart FileNameWithoutExtension => new(System.IO.Path.GetFileNameWithoutExtension(this.WindowsValue));
-        public PathPart FileName => new(System.IO.Path.GetFileName(this.WindowsValue));
-        public bool HasValue => !string.IsNullOrWhiteSpace(this._path);
-
-        public int Length => this.HasValue ? this.Value.Length : 0;
+        public int Length => HasValue ? Value.Length : 0;
 
         public PathPart Parent
         {
             get
             {
-                string tParent = this.Value.Trim('/');
+                string tParent = Value.Trim('/');
 
-                if (tParent.Contains('/'))
-                {
-                    return new PathPart(tParent[..tParent.LastIndexOf('/')]);
-                }
-
-                return default;
+                return tParent.Contains('/') ? new PathPart(tParent[..tParent.LastIndexOf('/')]) : default;
             }
         }
 
@@ -38,12 +31,12 @@ namespace Penguin.Vfs
         {
             get
             {
-                if (!this.HasValue)
+                if (!HasValue)
                 {
                     yield break;
                 }
 
-                string toSplit = this.Value;
+                string toSplit = Value;
 
                 if (toSplit.StartsWith("//"))
                 {
@@ -79,9 +72,9 @@ namespace Penguin.Vfs
             }
         }
 
-        public string Value => this._path;
+        public string Value { get; }
 
-        public string WindowsValue => this._path.Replace("/", "\\");
+        public string WindowsValue => Value.Replace("/", "\\");
 
         public PathPart(string path)
         {
@@ -90,7 +83,7 @@ namespace Penguin.Vfs
                 throw new ArgumentNullException(nameof(path));
             }
 
-            this._path = path.Replace("\\", "/");
+            Value = path.Replace("\\", "/");
         }
 
         public PathPart(IEnumerable<PathPart> parts) : this(parts.Select(p => p.Value))
@@ -104,29 +97,33 @@ namespace Penguin.Vfs
                 throw new ArgumentNullException(nameof(parts));
             }
 
-            this._path = string.Empty;
+            Value = string.Empty;
 
             foreach (string p in parts)
             {
-                this._path += '/' + p;
+                Value += '/' + p;
             }
         }
 
         public PathPart Append(string value)
         {
-            if (this.Value == "/")
-            {
-                return new(value);
-            }
-
-            return new(this.Value.TrimEnd('/') + "/" + value);
+            return Value == "/" ? (new(value)) : (new(Value.TrimEnd('/') + "/" + value));
         }
 
-        public PathPart Append(PathPart value) => this.Append(value.Value);
+        public PathPart Append(PathPart value)
+        {
+            return Append(value.Value);
+        }
 
-        public bool IsChildOf(PathPart other) => this.StartsWith(other.Value + "/");
+        public bool IsChildOf(PathPart other)
+        {
+            return StartsWith(other.Value + "/");
+        }
 
-        public PathPart MakeLocal(PathPart root) => this.MakeLocal(root.Value);
+        public PathPart MakeLocal(PathPart root)
+        {
+            return MakeLocal(root.Value);
+        }
 
         public PathPart MakeLocal(string root)
         {
@@ -135,7 +132,7 @@ namespace Penguin.Vfs
                 throw new System.ArgumentException($"'{nameof(root)}' cannot be null or whitespace.", nameof(root));
             }
 
-            string path = this.Value;
+            string path = Value;
 
             if (path.StartsWith(root))
             {
@@ -152,7 +149,10 @@ namespace Penguin.Vfs
             return new PathPart(path);
         }
 
-        public PathPart Prepend(string value) => new(value + this.Value);
+        public PathPart Prepend(string value)
+        {
+            return new(value + Value);
+        }
 
         public bool StartsWith(string v)
         {
@@ -161,14 +161,14 @@ namespace Penguin.Vfs
                 throw new System.ArgumentException($"'{nameof(v)}' cannot be null or whitespace.", nameof(v));
             }
 
-            if (v.Length > this._path.Length)
+            if (v.Length > Value.Length)
             {
                 return false;
             }
 
             for (int i = 0; i < v.Length; i++)
             {
-                bool aSlash = this._path[i] == '/';
+                bool aSlash = Value[i] == '/';
                 bool bSlash = v[i] is '/' or '\\';
 
                 if (aSlash && bSlash)
@@ -176,7 +176,7 @@ namespace Penguin.Vfs
                     continue;
                 }
 
-                if (this._path[i] != v[i])
+                if (Value[i] != v[i])
                 {
                     return false;
                 }
@@ -185,6 +185,34 @@ namespace Penguin.Vfs
             return true;
         }
 
-        public override string ToString() => this.HasValue ? this.Value : null;
+        public override string ToString()
+        {
+            return HasValue ? Value : null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool operator ==(PathPart left, PathPart right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PathPart left, PathPart right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(PathPart other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

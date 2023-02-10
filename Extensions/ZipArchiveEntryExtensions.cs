@@ -15,12 +15,7 @@ namespace Penguin.Vfs.Extensions
             string n = zipArchiveEntry.Name;
             string f = zipArchiveEntry.FullName;
 
-            if (n == f)
-            {
-                return string.Empty;
-            }
-
-            return f[..(f.Length - n.Length - 1)];
+            return n == f ? string.Empty : f[..(f.Length - n.Length - 1)];
         }
     }
 }

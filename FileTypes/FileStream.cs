@@ -9,16 +9,19 @@ namespace Penguin.Vfs.FileTypes
         public long Length { get; internal set; }
         public ResolveUriPackage ResolutionPackage { get; set; }
 
-        public IUri Uri => this.ResolutionPackage.VirtualUri;
+        public IUri Uri => ResolutionPackage.VirtualUri;
 
         public FileStream(ResolveUriPackage resolutionPackage)
         {
-            this.LastModified = resolutionPackage.LastModified;
-            this.Length = resolutionPackage.Length;
+            LastModified = resolutionPackage.LastModified;
+            Length = resolutionPackage.Length;
 
-            this.ResolutionPackage = resolutionPackage;
+            ResolutionPackage = resolutionPackage;
         }
 
-        public override string ToString() => this.Uri.FullName.Value;
+        public override string ToString()
+        {
+            return Uri.FullName.Value;
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace Penguin.Vfs.FileTypes
 
         public SingleCellRow(object value)
         {
-            this.cell = new TableFileCell()
+            cell = new TableFileCell()
             {
                 Value = value
             };
@@ -33,9 +33,12 @@ namespace Penguin.Vfs.FileTypes
 
         public IEnumerator<IDataCell> GetEnumerator()
         {
-            yield return this.cell;
+            yield return cell;
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

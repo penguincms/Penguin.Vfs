@@ -11,12 +11,12 @@ namespace Penguin.Vfs.FileTypes
 
         public TableFileRow(string source)
         {
-            this.Source = source;
+            Source = source;
         }
 
         public IEnumerator<IDataCell> GetEnumerator()
         {
-            foreach (string v in this.Source.SplitQuotedString())
+            foreach (string v in Source.SplitQuotedString())
             {
                 yield return new TableFileCell
                 {
@@ -25,6 +25,9 @@ namespace Penguin.Vfs.FileTypes
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

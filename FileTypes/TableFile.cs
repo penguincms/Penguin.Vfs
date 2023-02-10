@@ -7,12 +7,15 @@ namespace Penguin.Vfs.FileTypes
 {
     public abstract class TableFile : TextFile, IEnumerable<IDataRow>
     {
-        public TableFile(ResolveUriPackage resolveUriPackage) : base(resolveUriPackage)
+        protected TableFile(ResolveUriPackage resolveUriPackage) : base(resolveUriPackage)
         {
         }
 
         public abstract IEnumerator<IDataRow> GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

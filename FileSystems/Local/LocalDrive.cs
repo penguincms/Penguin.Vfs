@@ -13,32 +13,35 @@ namespace Penguin.Vfs.FileSystems.Local
         protected ResolveUriPackage ResolutionPackage;
         private bool disposedValue;
 
-        public IEnumerable<IDirectory> Directories => this.EnumerateDirectories(false);
+        public IEnumerable<IDirectory> Directories => EnumerateDirectories(false);
 
-        public IEnumerable<IFile> Files => this.EnumerateFiles(false);
+        public IEnumerable<IFile> Files => EnumerateFiles(false);
 
-        public IEnumerable<IFileSystemEntry> FileSystemEntries => this.EnumerateFileSystemEntries(false);
+        public IEnumerable<IFileSystemEntry> FileSystemEntries => EnumerateFileSystemEntries(false);
 
         public bool IsRecursive => false;
 
-        public DateTime LastModified => new DirectoryInfo(this.Uri.FullName.Value).LastWriteTime;
+        public DateTime LastModified => new DirectoryInfo(Uri.FullName.Value).LastWriteTime;
         public PathPart MountPoint { get; set; }
-        ResolveUriPackage IFileSystemEntry.ResolutionPackage => this.ResolutionPackage;
+        ResolveUriPackage IFileSystemEntry.ResolutionPackage => ResolutionPackage;
         public IUri Uri { get; }
 
         public LocalDrive(ResolveUriPackage resolveUriPackage)
         {
-            this.SetMount(resolveUriPackage.VirtualUri.FullName);
+            SetMount(resolveUriPackage.VirtualUri.FullName);
 
-            this.Uri = new VirtualUri(this.MountPoint);
+            Uri = new VirtualUri(MountPoint);
 
-            this.ResolutionPackage = resolveUriPackage.Copy();
+            ResolutionPackage = resolveUriPackage.Copy();
 
-            this.ResolutionPackage.FileSystem = this;
-            this.ResolutionPackage.VirtualUri = this.Uri;
+            ResolutionPackage.FileSystem = this;
+            ResolutionPackage.VirtualUri = Uri;
         }
 
-        public static bool operator !=(LocalDrive lhs, LocalDrive rhs) => !(lhs == rhs);
+        public static bool operator !=(LocalDrive lhs, LocalDrive rhs)
+        {
+            return !(lhs == rhs);
+        }
 
         public static bool operator ==(LocalDrive lhs, LocalDrive rhs)
         {
@@ -58,7 +61,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public bool DirectoryExists(string uri)
         {
-            if (this.ResolutionPackage.CachedDirectories.Contains(uri))
+            if (ResolutionPackage.CachedDirectories.Contains(uri))
             {
                 return true;
             }
@@ -69,30 +72,25 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public bool DirectoryExists(IUri uri)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
-            return this.DirectoryExists(uri.FullName.WindowsValue);
+            return uri is null ? throw new ArgumentNullException(nameof(uri)) : DirectoryExists(uri.FullName.WindowsValue);
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             System.GC.SuppressFinalize(this);
         }
 
-        public IEnumerable<IDirectory> EnumerateDirectories(PathPart path, bool recursive)
+        public IEnumerable<IDirectory> EnumerateDirectories(PathPart pathPart, bool recursive)
         {
-            if (this.Find(path, false) is IDirectory root)
+            if (Find(pathPart, false) is IDirectory root)
             {
                 IFileSystem entryFileSystem = root.ResolutionPackage.FileSystem ?? this;
 
                 if (entryFileSystem is LocalDrive ld && ld == this)
                 {
-                    string toSearch = this.GetWindowsRelative(path);
+                    string toSearch = GetWindowsRelative(pathPart);
 
                     List<string> allPaths = new();
                     List<string> directories = new();
@@ -113,38 +111,29 @@ namespace Penguin.Vfs.FileSystems.Local
                         throw;
                     }
 
-                    this.ResolutionPackage.CacheFiles(toSearch, files);
-                    this.ResolutionPackage.CacheDirectories(toSearch, directories);
+                    ResolutionPackage.CacheFiles(toSearch, files);
+                    ResolutionPackage.CacheDirectories(toSearch, directories);
 
                     allPaths.AddRange(directories.Select(s => s[(s.LastIndexOf('\\') + 1)..]));
                     allPaths.AddRange(files.Select(Path.GetFileName));
 
                     foreach (string fse in allPaths)
                     {
-                        VirtualUri itemPath;
-                        
-                        if(this.MountPoint.Value == path.Value)
-                        {
-                            itemPath = new(this.MountPoint, new PathPart(fse));
-                        } else
-                        {
-                            itemPath = new(this.MountPoint, path.Append(fse));
-                        }
-
-                        if (this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(itemPath), false) is IDirectory cfse)
+                        VirtualUri itemPath = MountPoint.Value == pathPart.Value ? (new(MountPoint, new PathPart(fse))) : (new(MountPoint, pathPart.Append(fse)));
+                        if (ResolutionPackage.EntryFactory.Resolve(ResolutionPackage.WithUri(itemPath), false) is IDirectory cfse)
                         {
                             yield return cfse;
 
                             if (recursive && !cfse.IsRecursive)
                             {
-                                List<IDirectory> cfseDirectories = new List<IDirectory>();
+                                List<IDirectory> cfseDirectories = new();
 
                                 try
                                 {
                                     cfseDirectories = cfse.EnumerateDirectories(true).ToList();
-                                } catch(IOException iex) when (iex.Message.Contains("being used by another process"))
+                                }
+                                catch (IOException iex) when (iex.Message.Contains("being used by another process"))
                                 {
-
                                 }
 
                                 foreach (IDirectory d in cfseDirectories)
@@ -165,19 +154,22 @@ namespace Penguin.Vfs.FileSystems.Local
             }
         }
 
-        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive) => this.EnumerateDirectories(this.MountPoint, recursive);
-
-        public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
+        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive)
         {
-            if (this.Find(path, false) is IDirectory root)
+            return EnumerateDirectories(MountPoint, recursive);
+        }
+
+        public IEnumerable<IFile> EnumerateFiles(PathPart pathPart, bool recursive)
+        {
+            if (Find(pathPart, false) is IDirectory root)
             {
                 IFileSystem entryFileSystem = root.ResolutionPackage.FileSystem ?? this;
 
                 if (entryFileSystem is LocalDrive ld && ld == this)
                 {
-                    string toSearch = this.GetWindowsRelative(path);
+                    string toSearch = GetWindowsRelative(pathPart);
 
-                    if (this.DirectoryExists(toSearch))
+                    if (DirectoryExists(toSearch))
                     {
                         List<string> files = new();
 
@@ -185,7 +177,7 @@ namespace Penguin.Vfs.FileSystems.Local
                         {
                             Debug.WriteLine($"Enumerating Files: {toSearch}");
                             files.AddRange(Directory.EnumerateFiles(toSearch));
-                            this.ResolutionPackage.CacheFiles(toSearch, files);
+                            ResolutionPackage.CacheFiles(toSearch, files);
                         }
                         catch (System.UnauthorizedAccessException)
                         {
@@ -197,10 +189,10 @@ namespace Penguin.Vfs.FileSystems.Local
                         foreach (string file in files)
                         {
                             FileInfo fi = new(file);
-                            ResolveUriPackage newPackage = this.ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(this.MountPoint))
+                            ResolveUriPackage newPackage = ResolutionPackage.AppendChild(new PathPart(file).MakeLocal(MountPoint))
                                                                                   .WithFileInfo(fi.LastWriteTime, fi.Length);
 
-                            if (this.ResolutionPackage.EntryFactory.Resolve(newPackage, true) is IFile f)
+                            if (ResolutionPackage.EntryFactory.Resolve(newPackage, true) is IFile f)
                             {
                                 yield return f;
                             }
@@ -209,7 +201,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
                     if (recursive)
                     {
-                        List<IDirectory> directories = this.EnumerateDirectories(path, true).ToList();
+                        List<IDirectory> directories = EnumerateDirectories(pathPart, true).ToList();
 
                         foreach (IDirectory d in directories)
                         {
@@ -240,28 +232,37 @@ namespace Penguin.Vfs.FileSystems.Local
             }
         }
 
-        public IEnumerable<IFile> EnumerateFiles(bool recursive) => this.EnumerateFiles(new PathPart(), recursive);
-
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(PathPart path, bool recursive)
+        public IEnumerable<IFile> EnumerateFiles(bool recursive)
         {
-            foreach (IFile file in this.EnumerateFiles(path, recursive))
+            return EnumerateFiles(new PathPart(), recursive);
+        }
+
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(PathPart pathPart, bool recursive)
+        {
+            foreach (IFile file in EnumerateFiles(pathPart, recursive))
             {
                 yield return file;
             }
 
-            foreach (IDirectory directory in this.EnumerateDirectories(path, recursive))
+            foreach (IDirectory directory in EnumerateDirectories(pathPart, recursive))
             {
                 yield return directory;
             }
         }
 
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive) => this.EnumerateFileSystemEntries(this.MountPoint, recursive);
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive)
+        {
+            return EnumerateFileSystemEntries(MountPoint, recursive);
+        }
 
-        public override bool Equals(object obj) => obj is LocalDrive ld && ld.MountPoint.Value == this.MountPoint.Value;
+        public override bool Equals(object obj)
+        {
+            return obj is LocalDrive ld && ld.MountPoint.Value == MountPoint.Value;
+        }
 
         public bool FileExists(string uri)
         {
-            if (this.ResolutionPackage.CachedFiles.Contains(uri))
+            if (ResolutionPackage.CachedFiles.Contains(uri))
             {
                 return true;
             }
@@ -272,71 +273,48 @@ namespace Penguin.Vfs.FileSystems.Local
 
         public bool FileExists(IUri uri)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
-            return this.FileExists(uri.FullName.WindowsValue);
+            return uri is null ? throw new ArgumentNullException(nameof(uri)) : FileExists(uri.FullName.WindowsValue);
         }
 
-        public virtual IFileSystemEntry Find(PathPart path, bool expectingFile)
+        public virtual IFileSystemEntry Find(PathPart pathPart, bool expectingFile)
         {
-            if(this.MountPoint.Value == path.Value)
+            if (MountPoint.Value == pathPart.Value)
             {
                 return this;
             }
 
-            string realLoc = this.GetWindowsRelative(path);
+            string realLoc = GetWindowsRelative(pathPart);
 
-            if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
-            {
-                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(new VirtualUri(this.MountPoint, path)), false);
-            }
-
-            return this.GenericFind(path, expectingFile);
+            return FileExists(realLoc) || DirectoryExists(realLoc)
+                ? ResolutionPackage.EntryFactory.Resolve(ResolutionPackage.WithUri(new VirtualUri(MountPoint, pathPart)), false)
+                : this.GenericFind(pathPart, expectingFile);
         }
 
         public string GetWindowsRelative(PathPart path)
         {
-            if (!path.HasValue || this.MountPoint.Value == path.Value)
-            {
-                if (this.MountPoint.WindowsValue.EndsWith("\\"))
-                {
-                    return this.MountPoint.WindowsValue;
-                }
-                else
-                {
-                    return this.MountPoint.WindowsValue + "\\";
-                }
-            }
-
-            return this.MountPoint.Append(path).WindowsValue;
+            return !path.HasValue || MountPoint.Value == path.Value
+                ? MountPoint.WindowsValue.EndsWith("\\") ? MountPoint.WindowsValue : MountPoint.WindowsValue + "\\"
+                : MountPoint.Append(path).WindowsValue;
         }
 
         public virtual IStream Open(IUri uri)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
-            return new FileStream(uri.FullName);
+            return uri is null ? throw new ArgumentNullException(nameof(uri)) : (IStream)new FileStream(uri.FullName);
         }
 
         public virtual void SetMount(PathPart path)
         {
-            this.MountPoint = path;
+            MountPoint = path;
 
-            if (!this.MountPoint.StartsWith("//?/"))
+            if (!MountPoint.StartsWith("//?/"))
             {
-                this.MountPoint = this.MountPoint.Prepend("//?/");
+                MountPoint = MountPoint.Prepend("//?/");
             }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
@@ -345,8 +323,23 @@ namespace Penguin.Vfs.FileSystems.Local
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DirectoryExists(Uri uri)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool FileExists(Uri uri)
+        {
+            throw new NotImplementedException();
         }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources

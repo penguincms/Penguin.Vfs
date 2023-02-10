@@ -20,9 +20,8 @@ namespace Penguin.Vfs.Extensions
                 throw new ArgumentNullException(nameof(populateFunc));
             }
 
-            CacheEntry[] entries = Array.Empty<CacheEntry>();
-
-            if (!cache.TryGetValue(key, out entries))
+            _ = Array.Empty<CacheEntry>();
+            if (!cache.TryGetValue(key, out CacheEntry[] entries))
             {
                 entries = populateFunc.Invoke().ToArray();
                 cache.Add(key, entries);

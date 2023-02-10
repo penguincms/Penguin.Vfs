@@ -1,11 +1,15 @@
-﻿using Penguin.Vfs.Interfaces;
+﻿using Penguin.Vfs.FileSystems.Local;
+using Penguin.Vfs.Interfaces;
 using System.Linq;
 
-namespace Penguin.Vfs.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Unc
 {
     internal class UncHandler : IFileSystemEntryHandler
     {
-        public IFileSystemEntry Create(ResolveUriPackage resolveUriPackage) => new UncDrive(resolveUriPackage);
+        public IFileSystemEntry Create(ResolveUriPackage resolveUriPackage)
+        {
+            return new UncDrive(resolveUriPackage);
+        }
 
         public bool IsMatch(ResolveUriPackage resolveUriPackage)
         {

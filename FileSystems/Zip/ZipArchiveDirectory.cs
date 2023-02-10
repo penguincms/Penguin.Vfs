@@ -15,27 +15,27 @@ namespace Penguin.Vfs.FileSystems.Zip
             get
             {
                 HashSet<string> returned = new();
-                using ZipArchive zipArchive = this.OpenZip();
+                using ZipArchive zipArchive = OpenZip();
 
                 foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
                 {
                     string dir = zipArchiveEntry.GetDirectoryName();
 
-                    if (dir.Length < this.Uri.LocalPath.Length + 1 || !dir.StartsWith(this.Uri.LocalPath + "//"))
+                    if (dir.Length < Uri.LocalPath.Length + 1 || !dir.StartsWith(Uri.LocalPath + "//"))
                     {
                         continue;
                     }
 
-                    dir = dir[(this.Uri.LocalPath.Length + 1)..];
+                    dir = dir[(Uri.LocalPath.Length + 1)..];
 
-                    if (dir != this.Uri.LocalPath.Value)
+                    if (dir != Uri.LocalPath.Value)
                     {
                         continue;
                     }
 
                     if (returned.Add(dir))
                     {
-                        yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(dir))
+                        yield return new ZipArchiveDirectory(ResolutionPackage.AppendChild(dir))
                         {
                             LastModified = DateTime.MinValue
                         };
@@ -48,16 +48,16 @@ namespace Penguin.Vfs.FileSystems.Zip
         {
             get
             {
-                using ZipArchive zipArchive = this.OpenZip();
+                using ZipArchive zipArchive = OpenZip();
 
                 foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
                 {
-                    if (this.Uri.LocalPath.Append(zipArchiveEntry.Name).Value != zipArchiveEntry.FullName)
+                    if (Uri.LocalPath.Append(zipArchiveEntry.Name).Value != zipArchiveEntry.FullName)
                     {
                         continue;
                     }
 
-                    yield return new ZipArchiveFile(this.ResolutionPackage.AppendChild(zipArchiveEntry.Name))
+                    yield return new ZipArchiveFile(ResolutionPackage.AppendChild(zipArchiveEntry.Name))
                     {
                         LastModified = zipArchiveEntry.LastWriteTime.DateTime
                     };
@@ -69,12 +69,12 @@ namespace Penguin.Vfs.FileSystems.Zip
         {
             get
             {
-                foreach (IDirectory dir in this.Directories)
+                foreach (IDirectory dir in Directories)
                 {
                     yield return dir;
                 }
 
-                foreach (IFile file in this.Files)
+                foreach (IFile file in Files)
                 {
                     yield return file;
                 }
@@ -86,29 +86,38 @@ namespace Penguin.Vfs.FileSystems.Zip
         public DateTime LastModified { get; internal set; }
         public ResolveUriPackage ResolutionPackage { get; }
 
-        public IUri Uri => this.ResolutionPackage.VirtualUri;
+        public IUri Uri => ResolutionPackage.VirtualUri;
 
         public ZipArchiveDirectory(ResolveUriPackage resolveUriPackage)
         {
-            this.ResolutionPackage = resolveUriPackage;
+            ResolutionPackage = resolveUriPackage;
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             System.GC.SuppressFinalize(this);
         }
 
-        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateDirectories(this.Uri.LocalPath, recursive);
+        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateDirectories(Uri.LocalPath, recursive);
+        }
 
-        public IEnumerable<IFile> EnumerateFiles(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateFiles(this.Uri.LocalPath, recursive);
+        public IEnumerable<IFile> EnumerateFiles(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateFiles(Uri.LocalPath, recursive);
+        }
 
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateFileSystemEntries(this.Uri.LocalPath, recursive);
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateFileSystemEntries(Uri.LocalPath, recursive);
+        }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
@@ -117,11 +126,14 @@ namespace Penguin.Vfs.FileSystems.Zip
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 
-        private ZipArchive OpenZip() => new(this.ResolutionPackage.FileSystem.Open(this.Uri).GetStream());
+        private ZipArchive OpenZip()
+        {
+            return new(ResolutionPackage.FileSystem.Open(Uri).GetStream());
+        }
 
         // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
         // ~ZipArchiveDirectory()

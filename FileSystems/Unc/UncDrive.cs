@@ -1,8 +1,9 @@
 ﻿using Penguin.Vfs.Caches;
+using Penguin.Vfs.FileSystems.Local;
 using Penguin.Vfs.Interfaces;
 using System;
 
-namespace Penguin.Vfs.FileSystems.Local
+namespace Penguin.Vfs.FileSystems.Unc
 {
     public class UncDrive : LocalDrive
     {
@@ -10,44 +11,32 @@ namespace Penguin.Vfs.FileSystems.Local
         {
         }
 
-        public override IFileSystemEntry Find(PathPart path, bool expectingFile)
+        public override IFileSystemEntry Find(PathPart pathPart, bool expectingFile)
         {
-            string realLoc = this.GetWindowsRelative(path);
+            string realLoc = GetWindowsRelative(pathPart);
 
             if (realLoc.StartsWith("\\\\?\\"))
             {
                 realLoc = realLoc[4..];
             }
 
-            if (this.FileExists(realLoc) || this.DirectoryExists(realLoc))
+            if (FileExists(realLoc) || DirectoryExists(realLoc))
             {
-
-                VirtualUri toSearch;
-                if (this.MountPoint.Value == path.Value)
-                {
-                    toSearch = new VirtualUri(this.MountPoint);
-                }
-                else
-                {
-                    toSearch = new VirtualUri(this.MountPoint, path);
-                }
-
-                return this.ResolutionPackage.EntryFactory.Resolve(this.ResolutionPackage.WithUri(toSearch), false);
+                VirtualUri toSearch = MountPoint.Value == pathPart.Value ? new VirtualUri(MountPoint) : new VirtualUri(MountPoint, pathPart);
+                return ResolutionPackage.EntryFactory.Resolve(ResolutionPackage.WithUri(toSearch), false);
             }
 
-            return base.Find(path, expectingFile);
+            return base.Find(pathPart, expectingFile);
         }
 
         public override IStream Open(IUri uri)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-
-            return new CachedFileStream(uri.FullName);
+            return uri is null ? throw new ArgumentNullException(nameof(uri)) : (IStream)new CachedFileStream(uri.FullName);
         }
 
-        public override void SetMount(PathPart path) => this.MountPoint = path;
+        public override void SetMount(PathPart path)
+        {
+            MountPoint = path;
+        }
     }
 }

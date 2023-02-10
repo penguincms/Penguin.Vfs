@@ -8,46 +8,58 @@ namespace Penguin.Vfs.FileSystems.Local
     {
         private bool disposedValue;
 
-        public IEnumerable<IDirectory> Directories => this.EnumerateDirectories(false);
+        public IEnumerable<IDirectory> Directories => EnumerateDirectories(false);
 
-        public IEnumerable<IFile> Files => this.EnumerateFiles(false);
+        public IEnumerable<IFile> Files => EnumerateFiles(false);
 
-        public IEnumerable<IFileSystemEntry> FileSystemEntries => this.EnumerateFileSystemEntries(false);
+        public IEnumerable<IFileSystemEntry> FileSystemEntries => EnumerateFileSystemEntries(false);
 
         public bool IsRecursive { get; private set; }
 
         public DateTime LastModified { get; internal set; }
         public ResolveUriPackage ResolutionPackage { get; }
 
-        public IUri Uri => this.ResolutionPackage.VirtualUri;
+        public IUri Uri => ResolutionPackage.VirtualUri;
 
         public LocalDirectoryEntry(ResolveUriPackage resolveUriPackage)
         {
-            this.LastModified = new System.IO.DirectoryInfo(resolveUriPackage.VirtualUri.FullName.Value).LastWriteTime;
+            LastModified = new System.IO.DirectoryInfo(resolveUriPackage.VirtualUri.FullName.Value).LastWriteTime;
 
-            this.ResolutionPackage = resolveUriPackage;
+            ResolutionPackage = resolveUriPackage;
 
-            this.IsRecursive = NativeMethods.TryGetFinalPathName(this.Uri.FullName.WindowsValue, out string target) && this.Uri.FullName.IsChildOf(new PathPart(target));
+            IsRecursive = NativeMethods.TryGetFinalPathName(Uri.FullName.WindowsValue, out string target) && Uri.FullName.IsChildOf(new PathPart(target));
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             System.GC.SuppressFinalize(this);
         }
 
-        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateDirectories(this.Uri.LocalPath, recursive);
+        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateDirectories(Uri.LocalPath, recursive);
+        }
 
-        public IEnumerable<IFile> EnumerateFiles(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateFiles(this.Uri.LocalPath, recursive);
+        public IEnumerable<IFile> EnumerateFiles(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateFiles(Uri.LocalPath, recursive);
+        }
 
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive) => this.ResolutionPackage.FileSystem.EnumerateFileSystemEntries(this.Uri.LocalPath, recursive);
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive)
+        {
+            return ResolutionPackage.FileSystem.EnumerateFileSystemEntries(Uri.LocalPath, recursive);
+        }
 
-        public override string ToString() => this.Uri.FullName.ToString();
+        public override string ToString()
+        {
+            return Uri.FullName.ToString();
+        }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
@@ -56,7 +68,7 @@ namespace Penguin.Vfs.FileSystems.Local
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 

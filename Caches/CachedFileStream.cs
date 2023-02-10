@@ -20,12 +20,12 @@ namespace Penguin.Vfs.Caches
         {
             get
             {
-                if (!this.length.HasValue)
+                if (!length.HasValue)
                 {
-                    this.length = this.FileStream.Length;
+                    length = FileStream.Length;
                 }
 
-                return this.length.Value;
+                return length.Value;
             }
         }
 
@@ -33,9 +33,9 @@ namespace Penguin.Vfs.Caches
         {
             get =>
                 //File.AppendAllText("bad.txt", $"REQ @{this.FileStream.Position}" + System.Environment.NewLine);
-                this.FileStream.Position;
+                FileStream.Position;
 
-            set => this.FileStream.Position = value;
+            set => FileStream.Position = value;
         }
 
         public CachedFileStream(PathPart _filePath, long? length = null)
@@ -43,7 +43,7 @@ namespace Penguin.Vfs.Caches
             this._filePath = _filePath;
             this.length = length;
 
-            this.FileStream = File.OpenRead(this._filePath.Value);
+            FileStream = File.OpenRead(this._filePath.Value);
         }
 
         public IEnumerable<string> EnumerateLines()
@@ -56,13 +56,19 @@ namespace Penguin.Vfs.Caches
             }
         }
 
-        public override void Flush() => throw new NotImplementedException();
+        public override void Flush()
+        {
+            throw new NotImplementedException();
+        }
 
-        public Stream GetStream() => this;
+        public Stream GetStream()
+        {
+            return this;
+        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            count = (int)Math.Min(count, this.Length - this.FileStream.Position);
+            count = (int)Math.Min(count, Length - FileStream.Position);
 
             if (count == 0)
             {
@@ -71,13 +77,13 @@ namespace Penguin.Vfs.Caches
 
             int remainingToRead = count;
 
-            long endPos = this.FileStream.Position + count;
+            long endPos = FileStream.Position + count;
 
-            long firstBlockOffset = this.FileStream.Position % DataCache.LEN_BLK;
+            long firstBlockOffset = FileStream.Position % DataCache.LEN_BLK;
 
-            long blocksToLoad = (endPos / DataCache.LEN_BLK) - (this.FileStream.Position / DataCache.LEN_BLK) + 1;
+            long blocksToLoad = (endPos / DataCache.LEN_BLK) - (FileStream.Position / DataCache.LEN_BLK) + 1;
 
-            uint startBlock = (uint)(this.FileStream.Position / DataCache.LEN_BLK);
+            uint startBlock = (uint)(FileStream.Position / DataCache.LEN_BLK);
 
             for (int blockOffset = 0; blockOffset < blocksToLoad; blockOffset++)
             {
@@ -85,7 +91,7 @@ namespace Penguin.Vfs.Caches
 
                 long thisBlockOffset = blockOffset == 0 ? firstBlockOffset : 0;
 
-                byte[] blockData = DataCache.ReadBlock(this._filePath.Value, (uint)checkBlock, this.FileStream);
+                byte[] blockData = DataCache.ReadBlock(_filePath.Value, (uint)checkBlock, FileStream);
 
                 int toRead = (int)Math.Min(blockData.Length - thisBlockOffset, remainingToRead);
 
@@ -95,7 +101,7 @@ namespace Penguin.Vfs.Caches
                 remainingToRead -= toRead;
             }
 
-            _ = this.FileStream.Seek(endPos, SeekOrigin.Begin);
+            _ = FileStream.Seek(endPos, SeekOrigin.Begin);
 
             //File.AppendAllText("bad.txt", $"REQ @{this.FileStream.Position} (byte[{buffer.Length}], {sOffset}, {count}); R = {offset}, <= \"{string.Join("", buffer.Select(b => b.ToString("X2")))}\"" + System.Environment.NewLine);
 
@@ -104,20 +110,26 @@ namespace Penguin.Vfs.Caches
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            long l = this.FileStream.Seek(offset, origin);
+            long l = FileStream.Seek(offset, origin);
 
             return l;
         }
 
-        public override void SetLength(long value) => throw new NotImplementedException();
+        public override void SetLength(long value)
+        {
+            throw new NotImplementedException();
+        }
 
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotImplementedException();
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            throw new NotImplementedException();
+        }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                this.FileStream.Dispose();
+                FileStream.Dispose();
             }
 
             base.Dispose(disposing);

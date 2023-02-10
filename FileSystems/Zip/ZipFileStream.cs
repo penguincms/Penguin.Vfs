@@ -16,19 +16,19 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         public ZipFileStream(ResolveUriPackage resolveUriPackage)
         {
-            this.ResolutionPackage = resolveUriPackage;
+            ResolutionPackage = resolveUriPackage;
         }
 
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            this.Dispose(disposing: true);
+            Dispose(disposing: true);
             System.GC.SuppressFinalize(this);
         }
 
         public IEnumerable<string> EnumerateLines()
         {
-            using StreamReader sr = new(this.GetStream());
+            using StreamReader sr = new(GetStream());
 
             string line = null;
 
@@ -40,11 +40,11 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         public Stream GetStream()
         {
-            IStream stream = this.ResolutionPackage.FileSystem.Open(new VirtualUri(this.ResolutionPackage.VirtualUri.MountPoint));
+            IStream stream = ResolutionPackage.FileSystem.Open(new VirtualUri(ResolutionPackage.VirtualUri.MountPoint));
 
             foreach (ZipArchiveEntry zipArchiveEntry in new ZipArchive(stream.GetStream()).Entries)
             {
-                if (zipArchiveEntry.FullName == this.ResolutionPackage.VirtualUri.LocalPath.Value)
+                if (zipArchiveEntry.FullName == ResolutionPackage.VirtualUri.LocalPath.Value)
                 {
                     return zipArchiveEntry.Open();
                 }
@@ -55,7 +55,7 @@ namespace Penguin.Vfs.FileSystems.Zip
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposedValue)
+            if (!disposedValue)
             {
                 if (disposing)
                 {
@@ -64,7 +64,7 @@ namespace Penguin.Vfs.FileSystems.Zip
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
                 // TODO: set large fields to null
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 

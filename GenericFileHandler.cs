@@ -24,17 +24,20 @@ namespace Penguin.Vfs
                     extension = "." + extension;
                 }
 
-                _ = this.Extensions.Add(extension);
+                _ = Extensions.Add(extension);
             }
         }
 
-        IFileSystemEntry IFileSystemEntryHandler.Create(ResolveUriPackage resolveUriPackage)
+        public IFileSystemEntry Create(ResolveUriPackage resolveUriPackage)
         {
             IFileSystemEntry toReturn = (T)Activator.CreateInstance(typeof(T), new object[] { resolveUriPackage });
 
             return toReturn;
         }
 
-        bool IFileSystemEntryHandler.IsMatch(ResolveUriPackage resolveUriPackage) => resolveUriPackage.VirtualUri.Extension.HasValue && this.Extensions.Contains(resolveUriPackage.VirtualUri.Extension.Value.ToLower());
+        public bool IsMatch(ResolveUriPackage resolveUriPackage)
+        {
+            return resolveUriPackage.VirtualUri.Extension.HasValue && Extensions.Contains(resolveUriPackage.VirtualUri.Extension.Value.ToLower(System.Globalization.CultureInfo.CurrentCulture));
+        }
     }
 }

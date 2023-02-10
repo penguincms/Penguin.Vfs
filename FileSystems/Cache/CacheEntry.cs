@@ -9,6 +9,9 @@ namespace Penguin.Vfs.FileSystems.Cache
         public ulong Size { get; set; }
         public CacheEntryType Type { get; set; }
 
-        public override string ToString() => this.FullName;
+        public override string ToString()
+        {
+            return FullName;
+        }
     }
 }

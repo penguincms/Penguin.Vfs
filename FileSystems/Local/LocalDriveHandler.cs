@@ -4,7 +4,10 @@ namespace Penguin.Vfs.FileSystems.Local
 {
     internal class LocalDriveHandler : IFileSystemEntryHandler
     {
-        public IFileSystemEntry Create(ResolveUriPackage resolveUriPackage) => new LocalDrive(resolveUriPackage);
+        public IFileSystemEntry Create(ResolveUriPackage resolveUriPackage)
+        {
+            return new LocalDrive(resolveUriPackage);
+        }
 
         public bool IsMatch(ResolveUriPackage resolveUriPackage)
         {

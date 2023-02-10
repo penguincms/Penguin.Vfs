@@ -33,7 +33,9 @@ namespace Penguin.Vfs.Extensions
                 if (chunks.Count == 0 && expectingFile)
                 {
                     topEntry = (topEntry as IHasFiles).Files.Where(d => d.Uri.Name.Value == partName).FirstOrDefault();
-                } else { 
+                }
+                else
+                {
                     topEntry = (topEntry as IHasDirectories).Directories.Where(d => d.Uri.Name.Value == partName).FirstOrDefault();
 
                     if (topEntry is null)
@@ -53,7 +55,6 @@ namespace Penguin.Vfs.Extensions
                         return fs.Find(new PathPart(chunks.Reverse()), expectingFile);
                     }
                 }
-
             }
 
             return topEntry;

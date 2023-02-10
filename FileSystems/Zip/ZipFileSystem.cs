@@ -13,32 +13,41 @@ namespace Penguin.Vfs.FileSystems.Zip
     {
         private static readonly object CacheLock = new();
         private readonly Dictionary<string, CachedZip> Cache = new();
-        public IEnumerable<IDirectory> Directories => this.EnumerateDirectories(new PathPart(), false);
+        /// <inheritdoc/>
+        public IEnumerable<IDirectory> Directories => EnumerateDirectories(new PathPart(), false);
+        /// <inheritdoc/>
 
-        public IEnumerable<IFile> Files => this.EnumerateFiles(new PathPart(), false);
+        public IEnumerable<IFile> Files => EnumerateFiles(new PathPart(), false);
+        /// <inheritdoc/>
 
         public IEnumerable<IFileSystemEntry> FileSystemEntries
         {
             get
             {
-                foreach (IDirectory dir in this.Directories)
+                foreach (IDirectory dir in Directories)
                 {
                     yield return dir;
                 }
 
-                foreach (IFile file in this.Files)
+                foreach (IFile file in Files)
                 {
                     yield return file;
                 }
             }
         }
+        /// <inheritdoc/>
 
         public bool IsRecursive => false;
+        /// <inheritdoc/>
         public DateTime LastModified { get; }
+        /// <inheritdoc/>
         public long Length { get; }
-        public PathPart MountPoint => this.ResolutionPackage.VirtualUri.FullName;
+        /// <inheritdoc/>
+        public PathPart MountPoint => ResolutionPackage.VirtualUri.FullName;
+        /// <inheritdoc/>
         public ResolveUriPackage ResolutionPackage { get; }
-        public IUri Uri => this.ResolutionPackage.VirtualUri;
+        /// <inheritdoc/>
+        public IUri Uri => ResolutionPackage.VirtualUri;
 
         private IEnumerable<CachedEntry> CachedEntries
         {
@@ -48,21 +57,21 @@ namespace Penguin.Vfs.FileSystems.Zip
 
                 lock (CacheLock)
                 {
-                    cz = this.Cache[this.CacheKey];
+                    cz = Cache[CacheKey];
 
                     if (cz.Entries != null)
                     {
                         return cz.Entries;
                     }
 
-                    cz.Entries = this.ReadEntries.ToList();
+                    cz.Entries = ReadEntries.ToList();
 
                     return cz.Entries;
                 }
             }
         }
 
-        private string CacheKey => this.Uri.FullName.Value;
+        private string CacheKey => Uri.FullName.Value;
 
         private IEnumerable<CachedEntry> ReadEntries
         {
@@ -70,7 +79,7 @@ namespace Penguin.Vfs.FileSystems.Zip
             {
                 List<CachedEntry> c = new();
 
-                foreach (ZipArchiveEntry zipArchiveEntry in this.TryGetEntries())
+                foreach (ZipArchiveEntry zipArchiveEntry in TryGetEntries())
                 {
                     c.Add(new CachedEntry()
                     {
@@ -84,30 +93,38 @@ namespace Penguin.Vfs.FileSystems.Zip
                 return c;
             }
         }
+        /// <inheritdoc/>
 
         public ZipFileSystem(ResolveUriPackage resolveUriPackage)
         {
-            this.ResolutionPackage = resolveUriPackage;
+            ResolutionPackage = resolveUriPackage;
 
-            if (!this.Cache.TryGetValue(this.CacheKey, out CachedZip cz))
+            if (!Cache.TryGetValue(CacheKey, out CachedZip cz))
             {
-                cz = new();
-                cz.Handles = 1;
-                this.Cache.Add(this.CacheKey, cz);
+                cz = new()
+                {
+                    Handles = 1
+                };
+                Cache.Add(CacheKey, cz);
             }
             else
             {
                 cz.Handles++;
             }
         }
+        /// <inheritdoc/>
 
-        public bool DirectoryExists(IUri uri) => this.CachedEntries.Any(e => uri.LocalPath.IsChildOf(new PathPart(e.FullName)));
+        public bool DirectoryExists(IUri uri)
+        {
+            return CachedEntries.Any(e => uri.LocalPath.IsChildOf(new PathPart(e.FullName)));
+        }
+        /// <inheritdoc/>
 
         public IEnumerable<IDirectory> EnumerateDirectories(PathPart pathPart, bool recursive)
         {
             HashSet<string> returned = new();
 
-            foreach (CachedEntry zipArchiveEntry in this.CachedEntries)
+            foreach (CachedEntry zipArchiveEntry in CachedEntries)
             {
                 PathPart dir = new(zipArchiveEntry.GetDirectoryName());
 
@@ -133,21 +150,26 @@ namespace Penguin.Vfs.FileSystems.Zip
 
                 if (returned.Add(dir.Value))
                 {
-                    yield return new ZipArchiveDirectory(this.ResolutionPackage.AppendChild(zipArchiveEntry.GetDirectoryName(), this))
+                    yield return new ZipArchiveDirectory(ResolutionPackage.AppendChild(zipArchiveEntry.GetDirectoryName(), this))
                     {
                         LastModified = System.DateTime.MinValue
                     };
                 }
             }
         }
+        /// <inheritdoc/>
 
-        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive) => this.EnumerateDirectories(new PathPart(), recursive);
-
-        public IEnumerable<IFile> EnumerateFiles(PathPart path, bool recursive)
+        public IEnumerable<IDirectory> EnumerateDirectories(bool recursive)
         {
-            foreach (CachedEntry zipArchiveEntry in this.CachedEntries)
+            return EnumerateDirectories(new PathPart(), recursive);
+        }
+        /// <inheritdoc/>
+
+        public IEnumerable<IFile> EnumerateFiles(PathPart pathPart, bool recursive)
+        {
+            foreach (CachedEntry zipArchiveEntry in CachedEntries)
             {
-                if (!path.HasValue)
+                if (!pathPart.HasValue)
                 {
                     if (!recursive)
                     {
@@ -157,73 +179,91 @@ namespace Penguin.Vfs.FileSystems.Zip
                         }
                     }
 
-                    yield return this.ResolutionPackage.EntryFactory.Resolve(
-                        this.ResolutionPackage.AppendChild(zipArchiveEntry.Name, this).WithFileInfo(zipArchiveEntry.LastModified, zipArchiveEntry.Length), true) as IFile;
+                    yield return ResolutionPackage.EntryFactory.Resolve(
+                        ResolutionPackage.AppendChild(zipArchiveEntry.Name, this).WithFileInfo(zipArchiveEntry.LastModified, zipArchiveEntry.Length), true) as IFile;
                 }
                 else
                 {
                     PathPart ZipPath = new(zipArchiveEntry.FullName);
 
-                    if (!ZipPath.IsChildOf(path))
+                    if (!ZipPath.IsChildOf(pathPart))
                     {
                         continue;
                     }
 
-                    PathPart LocalPath = ZipPath.MakeLocal(path);
+                    PathPart LocalPath = ZipPath.MakeLocal(pathPart);
 
                     if (!recursive && LocalPath.Depth > 1)
                     {
                         continue;
                     }
 
-                    if (this.ResolutionPackage.EntryFactory.Resolve((this.ResolutionPackage.WithFileSystem(this).WithUri(new VirtualUri(this.MountPoint, path.Append(zipArchiveEntry.Name)))),false) is IFile f)
+                    if (ResolutionPackage.EntryFactory.Resolve(ResolutionPackage.WithFileSystem(this).WithUri(new VirtualUri(MountPoint, pathPart.Append(zipArchiveEntry.Name))), false) is IFile f)
                     {
                         yield return f;
                     }
                 }
             }
         }
+        /// <inheritdoc/>
 
-        public IEnumerable<IFile> EnumerateFiles(bool recursive) => this.EnumerateFiles(new PathPart(), recursive);
-
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(PathPart path, bool recursive)
+        public IEnumerable<IFile> EnumerateFiles(bool recursive)
         {
-            foreach (IFile file in this.EnumerateFiles(path, recursive))
+            return EnumerateFiles(new PathPart(), recursive);
+        }
+        /// <inheritdoc/>
+
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(PathPart pathPart, bool recursive)
+        {
+            foreach (IFile file in EnumerateFiles(pathPart, recursive))
             {
                 yield return file;
             }
 
-            foreach (IDirectory dir in this.EnumerateDirectories(path, recursive))
+            foreach (IDirectory dir in EnumerateDirectories(pathPart, recursive))
             {
                 yield return dir;
             }
         }
+        /// <inheritdoc/>
 
-        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive) => this.EnumerateFileSystemEntries(new PathPart(), recursive);
-
-        public bool FileExists(IUri uri) => this.CachedEntries.Any(e => uri.LocalPath.Value == uri.LocalPath.Value);
-
-        public IFileSystemEntry Find(PathPart path, bool expectingFile) => this.GenericFind(path, expectingFile);
-
-        public IStream Open(IUri path)
+        public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive)
         {
-            if (path is null)
+            return EnumerateFileSystemEntries(new PathPart(), recursive);
+        }
+        /// <inheritdoc/>
+
+        public bool FileExists(IUri uri)
+        {
+            return CachedEntries.Any(e => uri.LocalPath.Value == uri.LocalPath.Value);
+        }
+        /// <inheritdoc/>
+
+        public IFileSystemEntry Find(PathPart pathPart, bool expectingFile)
+        {
+            return this.GenericFind(pathPart, expectingFile);
+        }
+        /// <inheritdoc/>
+
+        public IStream Open(IUri uri)
+        {
+            if (uri is null)
             {
-                throw new ArgumentNullException(nameof(path));
+                throw new ArgumentNullException(nameof(uri));
             }
 
-            IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
+            IStream stream = ResolutionPackage.FileSystem.Open(Uri);
 
-            if (!path.LocalPath.HasValue)
+            if (!uri.LocalPath.HasValue)
             {
                 return stream;
             }
 
-            foreach (CachedEntry zipArchiveEntry in this.CachedEntries)
+            foreach (CachedEntry zipArchiveEntry in CachedEntries)
             {
-                if (zipArchiveEntry.FullName == path.LocalPath.Value)
+                if (zipArchiveEntry.FullName == uri.LocalPath.Value)
                 {
-                    return new ZipFileStream(this.ResolutionPackage.WithFileSystem(this).WithUri(path));
+                    return new ZipFileStream(ResolutionPackage.WithFileSystem(this).WithUri(uri));
                 }
             }
 
@@ -231,12 +271,12 @@ namespace Penguin.Vfs.FileSystems.Zip
         }
 
         private IEnumerable<ZipArchiveEntry> TryGetEntries()
-        {         
+        {
             IEnumerator<ZipArchiveEntry> enumerator = null;
 
             try
             {
-                IStream stream = this.ResolutionPackage.FileSystem.Open(this.Uri);
+                IStream stream = ResolutionPackage.FileSystem.Open(Uri);
 
                 enumerator = new ZipArchive(stream.GetStream()).Entries.GetEnumerator();
             }
@@ -247,9 +287,9 @@ namespace Penguin.Vfs.FileSystems.Zip
                 try
                 {
                     //Check with no provider if we can to ensure its not just a provider issue
-                    if (File.Exists(this.Uri.FullName.WindowsValue))
+                    if (File.Exists(Uri.FullName.WindowsValue))
                     {
-                        List<ZipArchiveEntry> entries = new ZipArchive(File.Open(this.Uri.FullName.WindowsValue, FileMode.Open, FileAccess.Read, FileShare.Read)).Entries.ToList();
+                        List<ZipArchiveEntry> entries = new ZipArchive(File.Open(Uri.FullName.WindowsValue, FileMode.Open, FileAccess.Read, FileShare.Read)).Entries.ToList();
                         throw;
                     }
                 }
@@ -257,9 +297,9 @@ namespace Penguin.Vfs.FileSystems.Zip
                 {
                 }
             }
-            catch(System.IO.IOException iox) when (iox.Message.Contains("used by another process", StringComparison.OrdinalIgnoreCase))
+            catch (System.IO.IOException iox) when (iox.Message.Contains("used by another process", StringComparison.OrdinalIgnoreCase))
             {
-                Debug.WriteLine($"File '{this.Uri}' is being used by another process");
+                Debug.WriteLine($"File '{Uri}' is being used by another process");
             }
             catch (System.IO.InvalidDataException)
             {

@@ -59,9 +59,15 @@ namespace Penguin.Vfs.Caches
             }
         }
 
-        public static ulong GetBlockAllocationKey(uint id, uint blockNumber) => ((ulong)id << 32) | blockNumber;
+        public static ulong GetBlockAllocationKey(uint id, uint blockNumber)
+        {
+            return ((ulong)id << 32) | blockNumber;
+        }
 
-        public static byte[] ReadBlock(string filePath, uint blockNumber, Stream sourceFile) => ReadBlock(GetFileId(filePath), blockNumber, sourceFile);
+        public static byte[] ReadBlock(string filePath, uint blockNumber, Stream sourceFile)
+        {
+            return ReadBlock(GetFileId(filePath), blockNumber, sourceFile);
+        }
 
         public static byte[] ReadBlock(uint fileId, uint blockNumber, Stream sourceFile)
         {

@@ -14,18 +14,16 @@ namespace Penguin.Vfs.FileSystems.Zip
 
             public string GetDirectoryName()
             {
-                string n = this.Name;
-                string f = this.FullName;
+                string n = Name;
+                string f = FullName;
 
-                if (n == f)
-                {
-                    return string.Empty;
-                }
-
-                return f[..(f.Length - n.Length - 1)];
+                return n == f ? string.Empty : f[..(f.Length - n.Length - 1)];
             }
 
-            public override string ToString() => this.FullName;
+            public override string ToString()
+            {
+                return FullName;
+            }
         }
     }
 }

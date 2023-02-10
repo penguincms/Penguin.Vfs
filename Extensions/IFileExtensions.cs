@@ -7,12 +7,7 @@ namespace Penguin.Vfs.Extensions
     {
         public static IStream Open(this IFile file)
         {
-            if (file is null)
-            {
-                throw new ArgumentNullException(nameof(file));
-            }
-
-            return file.ResolutionPackage.FileSystem.Open(file.Uri);
+            return file is null ? throw new ArgumentNullException(nameof(file)) : file.ResolutionPackage.FileSystem.Open(file.Uri);
         }
     }
 }

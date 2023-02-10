@@ -8,7 +8,7 @@ namespace Penguin.Vfs
 
         public PathPart Extension { get; }
 
-        public PathPart FullName => !this.LocalPath.HasValue ? this.MountPoint : this.MountPoint.Append(this.LocalPath);
+        public PathPart FullName => !LocalPath.HasValue ? MountPoint : MountPoint.Append(LocalPath);
 
         public PathPart LocalPath { get; }
 
@@ -16,30 +16,39 @@ namespace Penguin.Vfs
 
         public PathPart Name { get; }
 
-        public IUri Parent => new VirtualUri(this.MountPoint, this.ParentPath);
+        public IUri Parent => new VirtualUri(MountPoint, ParentPath);
 
         public VirtualUri(PathPart mountPoint, PathPart localPath)
         {
-            this.Name = localPath.FileName;
-            this.Extension = localPath.Extension;
-            this.MountPoint = mountPoint;
-            this.LocalPath = localPath;
+            Name = localPath.FileName;
+            Extension = localPath.Extension;
+            MountPoint = mountPoint;
+            LocalPath = localPath;
 
-            this.ParentPath = localPath.Parent;
+            ParentPath = localPath.Parent;
         }
 
         public VirtualUri(PathPart mountPoint)
         {
-            this.MountPoint = mountPoint;
+            MountPoint = mountPoint;
         }
 
         private VirtualUri()
         { }
 
-        public IUri AppendChild(PathPart name) => new VirtualUri(this.MountPoint, this.LocalPath.HasValue ? this.LocalPath.Append(name) : name);
+        public IUri AppendChild(PathPart name)
+        {
+            return new VirtualUri(MountPoint, LocalPath.HasValue ? LocalPath.Append(name) : name);
+        }
 
-        public IUri AsFileSystem() => new VirtualUri(this.FullName);
+        public IUri AsFileSystem()
+        {
+            return new VirtualUri(FullName);
+        }
 
-        public override string ToString() => this.FullName.HasValue ? this.FullName.ToString() : string.Empty;
+        public override string ToString()
+        {
+            return FullName.HasValue ? FullName.ToString() : string.Empty;
+        }
     }
 }

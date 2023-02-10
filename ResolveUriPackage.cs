@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Penguin.Vfs
 {
-    public struct ResolveUriPackage
+    public struct ResolveUriPackage : IEquatable<ResolveUriPackage>
     {
         private HashSet<string> cachedDirectories;
         private HashSet<string> cachedFiles;
@@ -14,8 +14,8 @@ namespace Penguin.Vfs
         {
             get
             {
-                this.cachedDirectories ??= new();
-                return this.cachedDirectories;
+                cachedDirectories ??= new();
+                return cachedDirectories;
             }
         }
 
@@ -23,8 +23,8 @@ namespace Penguin.Vfs
         {
             get
             {
-                this.cachedFiles ??= new();
-                return this.cachedFiles;
+                cachedFiles ??= new();
+                return cachedFiles;
             }
         }
 
@@ -32,8 +32,8 @@ namespace Penguin.Vfs
         {
             get
             {
-                this.directoryContents ??= new();
-                return this.directoryContents;
+                directoryContents ??= new();
+                return directoryContents;
             }
         }
 
@@ -51,17 +51,17 @@ namespace Penguin.Vfs
                 throw new ArgumentNullException(nameof(name));
             }
 
-            if (name.Contains("/") || name.Contains("\\"))
+            if (name.Contains('/') || name.Contains('\\'))
             {
                 //Debugger.Break();
             }
 
-            return this.AppendChild(new PathPart(name), fileSystem);
+            return AppendChild(new PathPart(name), fileSystem);
         }
 
         public ResolveUriPackage AppendChild(PathPart name, IFileSystem fileSystem = null)
         {
-            ResolveUriPackage toReturn = this.Copy();
+            ResolveUriPackage toReturn = Copy();
 
             if (fileSystem != null)
             {
@@ -70,7 +70,7 @@ namespace Penguin.Vfs
             }
             else
             {
-                toReturn.VirtualUri = this.VirtualUri.AppendChild(name);
+                toReturn.VirtualUri = VirtualUri.AppendChild(name);
             }
 
             return toReturn;
@@ -78,10 +78,10 @@ namespace Penguin.Vfs
 
         public void CacheDirectories(string parent, IEnumerable<string> children)
         {
-            if (!this.DirectoryContents.TryGetValue(parent, out HashSet<string> target))
+            if (!DirectoryContents.TryGetValue(parent, out HashSet<string> target))
             {
                 target = new HashSet<string>();
-                this.directoryContents.Add(parent, target);
+                directoryContents.Add(parent, target);
             }
 
             if (children is null)
@@ -89,20 +89,20 @@ namespace Penguin.Vfs
                 throw new ArgumentNullException(nameof(children));
             }
 
-            this.cachedDirectories ??= new();
+            cachedDirectories ??= new();
             foreach (string f in children)
             {
                 _ = target.Add(f);
-                _ = this.cachedDirectories.Add(f);
+                _ = cachedDirectories.Add(f);
             }
         }
 
         public void CacheFiles(string parent, IEnumerable<string> children)
         {
-            if (!this.DirectoryContents.TryGetValue(parent, out HashSet<string> target))
+            if (!DirectoryContents.TryGetValue(parent, out HashSet<string> target))
             {
                 target = new HashSet<string>();
-                this.directoryContents.Add(parent, target);
+                directoryContents.Add(parent, target);
             }
 
             if (children is null)
@@ -110,11 +110,11 @@ namespace Penguin.Vfs
                 throw new ArgumentNullException(nameof(children));
             }
 
-            this.cachedFiles ??= new();
+            cachedFiles ??= new();
             foreach (string f in children)
             {
                 _ = target.Add(f);
-                _ = this.cachedFiles.Add(f);
+                _ = cachedFiles.Add(f);
             }
         }
 
@@ -122,18 +122,18 @@ namespace Penguin.Vfs
         {
             return new ResolveUriPackage()
             {
-                EntryFactory = this.EntryFactory,
-                FileSystem = this.FileSystem,
-                SessionCache = this.SessionCache,
-                VirtualUri = this.VirtualUri,
-                cachedDirectories = this.cachedDirectories,
-                cachedFiles = this.cachedFiles
+                EntryFactory = EntryFactory,
+                FileSystem = FileSystem,
+                SessionCache = SessionCache,
+                VirtualUri = VirtualUri,
+                cachedDirectories = cachedDirectories,
+                cachedFiles = cachedFiles
             };
         }
 
         public ResolveUriPackage WithFileInfo(DateTime lastModified, long length)
         {
-            ResolveUriPackage toReturn = this.Copy();
+            ResolveUriPackage toReturn = Copy();
             toReturn.LastModified = lastModified;
             toReturn.Length = length;
             return toReturn;
@@ -141,16 +141,41 @@ namespace Penguin.Vfs
 
         public ResolveUriPackage WithFileSystem(IFileSystem fileSystem)
         {
-            ResolveUriPackage toReturn = this.Copy();
+            ResolveUriPackage toReturn = Copy();
             toReturn.FileSystem = fileSystem;
             return toReturn;
         }
 
         public ResolveUriPackage WithUri(IUri uri)
         {
-            ResolveUriPackage toReturn = this.Copy();
+            ResolveUriPackage toReturn = Copy();
             toReturn.VirtualUri = uri;
             return toReturn;
+        }
+
+        public override bool Equals(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool operator ==(ResolveUriPackage left, ResolveUriPackage right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ResolveUriPackage left, ResolveUriPackage right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(ResolveUriPackage other)
+        {
+            throw new NotImplementedException();
         }
     }
 }
