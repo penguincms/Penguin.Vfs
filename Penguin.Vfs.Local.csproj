@@ -10,8 +10,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Penguin.Collections" Version="5.0.6-TB7ZBM0" />
-    <PackageReference Include="Penguin.Extensions.String" Version="5.0.6-TB7ZBM0" />
+    <ProjectReference Include="..\Penguin.Collections\Penguin.Collections.Local.csproj" />
+    <ProjectReference Include="..\Penguin.Extensions.String\Penguin.Extensions.String.Local.csproj" />
   </ItemGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
 </Project>
