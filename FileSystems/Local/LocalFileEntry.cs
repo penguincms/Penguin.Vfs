@@ -7,8 +7,11 @@ namespace Penguin.Vfs.FileSystems.Local
     {
         private bool disposedValue;
         private ResolveUriPackage ResolutionPackage;
+
         public DateTime LastModified { get; internal set; }
+
         public long Length { get; internal set; }
+
         ResolveUriPackage IFileSystemEntry.ResolutionPackage { get; }
 
         public IUri Uri => ResolutionPackage.VirtualUri;

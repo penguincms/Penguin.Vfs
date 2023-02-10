@@ -7,12 +7,15 @@ namespace Penguin.Vfs
     public struct PathPart : IEquatable<PathPart>
     {
         public IEnumerable<PathPart> Chunks => PathChunks.Select(s => new PathPart(s));
+
         public int Depth => Value.Trim('/').Count(c => c == '/') + 1;
 
         public PathPart Extension => new(System.IO.Path.GetExtension(WindowsValue));
 
         public PathPart FileNameWithoutExtension => new(System.IO.Path.GetFileNameWithoutExtension(WindowsValue));
+
         public PathPart FileName => new(System.IO.Path.GetFileName(WindowsValue));
+
         public bool HasValue => !string.IsNullOrWhiteSpace(Value);
 
         public int Length => HasValue ? Value.Length : 0;

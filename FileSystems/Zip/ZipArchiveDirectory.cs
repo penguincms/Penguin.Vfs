@@ -84,6 +84,7 @@ namespace Penguin.Vfs.FileSystems.Zip
         public bool IsRecursive => false;
 
         public DateTime LastModified { get; internal set; }
+
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => ResolutionPackage.VirtualUri;

@@ -7,6 +7,7 @@ namespace Penguin.Vfs.FileSystems.Zip
         private class CachedZip
         {
             public List<CachedEntry> Entries { get; set; }
+
             public int Handles { get; set; }
         }
     }

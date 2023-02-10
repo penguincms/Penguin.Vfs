@@ -6,7 +6,9 @@ namespace Penguin.Vfs.FileTypes
     public class FileStream : IFile
     {
         public DateTime LastModified { get; internal set; }
+
         public long Length { get; internal set; }
+
         public ResolveUriPackage ResolutionPackage { get; set; }
 
         public IUri Uri => ResolutionPackage.VirtualUri;

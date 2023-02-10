@@ -17,6 +17,7 @@ namespace Penguin.Vfs.FileSystems.Local
         public bool IsRecursive { get; private set; }
 
         public DateTime LastModified { get; internal set; }
+
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => ResolutionPackage.VirtualUri;

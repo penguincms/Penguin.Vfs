@@ -5,6 +5,7 @@ namespace Penguin.Vfs
     public abstract class RegexFileSystemEntryHandler : IFileSystemEntryHandler
     {
         private readonly string Regex;
+
         public virtual System.Text.RegularExpressions.RegexOptions RegexOptions { get; set; } = System.Text.RegularExpressions.RegexOptions.IgnoreCase;
 
         protected RegexFileSystemEntryHandler(string regex)

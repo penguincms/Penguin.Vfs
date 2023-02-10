@@ -8,7 +8,9 @@ namespace Penguin.Vfs.FileSystems.Zip
         private bool disposedValue;
 
         public DateTime LastModified { get; internal set; }
+
         public long Length { get; }
+
         public ResolveUriPackage ResolutionPackage { get; }
 
         public IUri Uri => ResolutionPackage.VirtualUri;

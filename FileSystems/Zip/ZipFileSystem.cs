@@ -13,8 +13,10 @@ namespace Penguin.Vfs.FileSystems.Zip
     {
         private static readonly object CacheLock = new();
         private readonly Dictionary<string, CachedZip> Cache = new();
+
         /// <inheritdoc/>
         public IEnumerable<IDirectory> Directories => EnumerateDirectories(new PathPart(), false);
+
         /// <inheritdoc/>
 
         public IEnumerable<IFile> Files => EnumerateFiles(new PathPart(), false);
@@ -35,17 +37,23 @@ namespace Penguin.Vfs.FileSystems.Zip
                 }
             }
         }
+
         /// <inheritdoc/>
 
         public bool IsRecursive => false;
+
         /// <inheritdoc/>
         public DateTime LastModified { get; }
+
         /// <inheritdoc/>
         public long Length { get; }
+
         /// <inheritdoc/>
         public PathPart MountPoint => ResolutionPackage.VirtualUri.FullName;
+
         /// <inheritdoc/>
         public ResolveUriPackage ResolutionPackage { get; }
+
         /// <inheritdoc/>
         public IUri Uri => ResolutionPackage.VirtualUri;
 
@@ -93,6 +101,7 @@ namespace Penguin.Vfs.FileSystems.Zip
                 return c;
             }
         }
+
         /// <inheritdoc/>
 
         public ZipFileSystem(ResolveUriPackage resolveUriPackage)
@@ -112,12 +121,14 @@ namespace Penguin.Vfs.FileSystems.Zip
                 cz.Handles++;
             }
         }
+
         /// <inheritdoc/>
 
         public bool DirectoryExists(IUri uri)
         {
             return CachedEntries.Any(e => uri.LocalPath.IsChildOf(new PathPart(e.FullName)));
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IDirectory> EnumerateDirectories(PathPart pathPart, bool recursive)
@@ -157,12 +168,14 @@ namespace Penguin.Vfs.FileSystems.Zip
                 }
             }
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IDirectory> EnumerateDirectories(bool recursive)
         {
             return EnumerateDirectories(new PathPart(), recursive);
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IFile> EnumerateFiles(PathPart pathPart, bool recursive)
@@ -205,12 +218,14 @@ namespace Penguin.Vfs.FileSystems.Zip
                 }
             }
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IFile> EnumerateFiles(bool recursive)
         {
             return EnumerateFiles(new PathPart(), recursive);
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(PathPart pathPart, bool recursive)
@@ -225,24 +240,28 @@ namespace Penguin.Vfs.FileSystems.Zip
                 yield return dir;
             }
         }
+
         /// <inheritdoc/>
 
         public IEnumerable<IFileSystemEntry> EnumerateFileSystemEntries(bool recursive)
         {
             return EnumerateFileSystemEntries(new PathPart(), recursive);
         }
+
         /// <inheritdoc/>
 
         public bool FileExists(IUri uri)
         {
             return CachedEntries.Any(e => uri.LocalPath.Value == uri.LocalPath.Value);
         }
+
         /// <inheritdoc/>
 
         public IFileSystemEntry Find(PathPart pathPart, bool expectingFile)
         {
             return this.GenericFind(pathPart, expectingFile);
         }
+
         /// <inheritdoc/>
 
         public IStream Open(IUri uri)

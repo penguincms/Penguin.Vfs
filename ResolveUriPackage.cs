@@ -38,10 +38,15 @@ namespace Penguin.Vfs
         }
 
         public IFileSystemEntryFactory EntryFactory { get; set; }
+
         public IFileSystem FileSystem { get; set; }
+
         public DateTime LastModified { get; set; }
+
         public long Length { get; set; }
+
         public Dictionary<string, IFileSystemEntry> SessionCache { get; set; }
+
         public IUri VirtualUri { get; set; }
 
         public ResolveUriPackage AppendChild(string name, IFileSystem fileSystem = null)

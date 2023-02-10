@@ -5,64 +5,64 @@
     </assembly>
     <members>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Directories">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Files">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.FileSystemEntries">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.IsRecursive">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.LastModified">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Length">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.MountPoint">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.ResolutionPackage">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="P:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Uri">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.#ctor(Penguin.Vfs.ResolveUriPackage)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.DirectoryExists(Penguin.Vfs.Interfaces.IUri)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateDirectories(Penguin.Vfs.PathPart,System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateDirectories(System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateFiles(Penguin.Vfs.PathPart,System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateFiles(System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateFileSystemEntries(Penguin.Vfs.PathPart,System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.EnumerateFileSystemEntries(System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.FileExists(Penguin.Vfs.Interfaces.IUri)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Find(Penguin.Vfs.PathPart,System.Boolean)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
         <member name="M:Penguin.Vfs.FileSystems.Zip.ZipFileSystem.Open(Penguin.Vfs.Interfaces.IUri)">
-            <inheritdoc/>
+            <inheritdoc />
         </member>
     </members>
 </doc>

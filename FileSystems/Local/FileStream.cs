@@ -9,6 +9,7 @@ namespace Penguin.Vfs.FileSystems.Local
         private readonly PathPart Path;
 
         private readonly Stream stream;
+
         public override bool CanRead => stream.CanRead;
 
         public override bool CanSeek => stream.CanSeek;

@@ -22,8 +22,11 @@ namespace Penguin.Vfs.FileSystems.Local
         public bool IsRecursive => false;
 
         public DateTime LastModified => new DirectoryInfo(Uri.FullName.Value).LastWriteTime;
+
         public PathPart MountPoint { get; set; }
+
         ResolveUriPackage IFileSystemEntry.ResolutionPackage => ResolutionPackage;
+
         public IUri Uri { get; }
 
         public LocalDrive(ResolveUriPackage resolveUriPackage)

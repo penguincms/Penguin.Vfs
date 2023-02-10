@@ -28,7 +28,9 @@ namespace Penguin.Vfs.Caches
         private static readonly AutoResetEvent GATE_TEMP_CACHE = new(false);
         private static readonly DictionaryFile<string, uint> IdDictionary;
         private static readonly BackgroundWorker TempCacheWorker;
+
         public static string AppRoot => System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, System.AppDomain.CurrentDomain.RelativeSearchPath ?? "");
+
         public static string CacheDirectory => Path.Combine(AppRoot, CACHE_ROOT);
 
         static DataCache()

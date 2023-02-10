@@ -9,6 +9,7 @@ namespace Penguin.Vfs
     public class VirtualFileSystemService
     {
         public IFileSystemCache Cache { get; set; } = new DummyCache();
+
         public VirtualFileSystemSettings VirtualFileSystemSettings { get; set; } = new VirtualFileSystemSettings();
 
         public IEnumerable<IDirectory> EnumerateDirectories(string path, bool recursive)
