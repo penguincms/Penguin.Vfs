@@ -7,7 +7,7 @@ namespace Penguin.Vfs
         private readonly string Regex;
         public virtual System.Text.RegularExpressions.RegexOptions RegexOptions { get; set; } = System.Text.RegularExpressions.RegexOptions.IgnoreCase;
 
-        public RegexFileSystemEntryHandler(string regex)
+        protected RegexFileSystemEntryHandler(string regex)
         {
             this.Regex = regex;
         }
