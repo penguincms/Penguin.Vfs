@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <PackageProjectUrl>https://github.com/PenguinCMS/Penguin.Vfs</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/PenguinCms/Penguin.Vfs</PackageProjectUrl>
     <DocumentationFile>Penguin.Vfs.xml</DocumentationFile>
     <Version>1.0.0</Version>
     <AssemblyName>Penguin.Vfs</AssemblyName>
