@@ -1,5 +1,4 @@
-﻿using Penguin.Collections;
-using Penguin.Collections.SerializationSettings;
+﻿using Loxifi;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -42,8 +41,8 @@ namespace Penguin.Vfs.Caches
 
             CACHE_DISK = File.Open(Path.Combine(CacheDirectory, "BlockAllocationTable.dat"), FileMode.OpenOrCreate);
             MEM_CACHE_DISK = File.Open(Path.Combine(CacheDirectory, "BlockAllocationTable.mem"), FileMode.OpenOrCreate);
-            IdDictionary = new(Path.Combine(CacheDirectory, "Ids.dict"), new StringSerialization(), new UIntSerialization());
-            DataPositions = new(Path.Combine(CacheDirectory, "BlockAllocationTable.dict"), new ULongSerialization(), false);
+            IdDictionary = new(Path.Combine(CacheDirectory, "Ids.dict"));
+            DataPositions = new(Path.Combine(CacheDirectory, "BlockAllocationTable.dict"), false);
 
             TempCacheWorker = new BackgroundWorker();
             TempCacheWorker.DoWork += TempCacheWorker_DoWork;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <PackageProjectUrl>https://github.com/PenguinCms/Penguin.Vfs</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/PenguinCMS/Penguin.Vfs</PackageProjectUrl>
     <DocumentationFile>Penguin.Vfs.xml</DocumentationFile>
     <Version>1.0.0</Version>
     <AssemblyName>Penguin.Vfs</AssemblyName>
@@ -10,8 +10,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Penguin.Collections\Penguin.Collections.Local.csproj" />
-    <ProjectReference Include="..\Penguin.Extensions.String\Penguin.Extensions.String.Local.csproj" />
+    <PackageReference Include="Loxifi.DictionaryFile" Version="0.1.0" />
+    <PackageReference Include="Loxifi.Extensions.StringExtensions" Version="0.1.0" />
   </ItemGroup>
   <Import Project="Penguin.Projects.Shared\Penguin.Projects.Shared.csproj" />
 </Project>

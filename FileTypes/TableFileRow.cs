@@ -1,4 +1,4 @@
-﻿using Penguin.Extensions.String;
+﻿using Loxifi.Extensions.StringExtensions;
 using Penguin.Vfs.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace Penguin.Vfs.FileTypes
 
         public IEnumerator<IDataCell> GetEnumerator()
         {
-            foreach (string v in Source.SplitQuotedString())
+            foreach (string v in Source.Split(new StringSplitOptions()))
             {
                 yield return new TableFileCell
                 {
