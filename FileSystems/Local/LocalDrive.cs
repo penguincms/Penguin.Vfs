@@ -334,22 +334,5 @@ namespace Penguin.Vfs.FileSystems.Local
         {
             throw new NotImplementedException();
         }
-
-        public bool DirectoryExists(Uri uri)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool FileExists(Uri uri)
-        {
-            throw new NotImplementedException();
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~LocalDrive()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
     }
 }
